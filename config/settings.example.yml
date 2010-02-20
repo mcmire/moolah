@@ -1,0 +1,13 @@
+defaults: &defaults
+  :log_level: info
+  :app_title: "My Awesome App"
+
+:development:
+  <<: *defaults
+  :log_level: debug
+
+:test:
+  <<: *defaults
+
+:production:
+  <<: *defaults

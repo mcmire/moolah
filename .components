@@ -1,0 +1,6 @@
+--- 
+:script: jquery
+:mock: mocha
+:orm: mongomapper
+:renderer: haml
+:test: rspec
