@@ -1,7 +1,9 @@
 require 'rubygems'
 
 PADRINO_ENV = 'test' unless defined?(PADRINO_ENV)
-require File.dirname(__FILE__) + "/../config/boot"
+RequireBenchmarking.measuring_requires do
+  require File.expand_path(File.dirname(__FILE__) + "/../config/boot")
+end
 
 TEST_DIR = "#{PADRINO_ROOT}/test"
 

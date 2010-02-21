@@ -4,3 +4,7 @@ tmp/**/*
 bin/*
 vendor/gems/*
 !vendor/gems/cache/
+Gemfile.old
+Rakefile.old
+spec.old
+*.tmproj

@@ -115,6 +115,7 @@ end
   
 # Adapted from hashrocket's unencumbered
 # http://github.com/hashrocket/unencumbered/blob/master/lib/unencumbered.rb
+# which came from http://blog.voxdolo.me/gibbon.html
 module Storytime
   module Protest
     def self.extended(klass)

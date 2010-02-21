@@ -54,25 +54,6 @@ if jeweler_present? && bundler_present?
   #task :test => :check_bundler_dependencies
 end
 
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'test'
-  test.pattern = "test/**/*_test.rb"
-  test.verbose = true
-end
-namespace :test do
-  [:models, :integration].each do |sub|
-    desc "Runs the code examples in spec/#{sub}"
-    Rake::TestTask.new(sub) do |test|
-      test.libs << 'test'
-      test.pattern = "test/#{sub}/**/*_test.rb"
-      test.verbose = true
-    end
-  end
-end
-
-task :default => :test
-
 =begin
 begin
   require 'yard'
@@ -85,3 +66,6 @@ rescue LoadError
   end
 end
 =end
+
+$:.unshift File.expand_path(File.dirname(__FILE__))
+Dir["#{File.dirname(__FILE__)}/lib/tasks/**/*.rake"].sort.each {|ext| load ext }
