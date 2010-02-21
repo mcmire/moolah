@@ -33,5 +33,7 @@ class Moolah < Padrino::Application
   #     render 'errors/404'
   #   end
   #
+  
+  layout "app"
 
 end

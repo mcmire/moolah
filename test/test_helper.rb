@@ -14,4 +14,4 @@ def app
   @app ||= Moolah.tap {|app| app.use Rack::Session::Cookie }.new
 end
 
-Dir[File.dirname(__FILE__) + "/support/*.rb"].each {|file| require file }
+Dir["#{TEST_DIR}/support/*.rb"].each {|file| require file }

@@ -260,6 +260,3 @@ module Protest
   
   extend Storytime::Protest
 end
-
-# Can we can control this somehow?
-Protest.report_with(:features)

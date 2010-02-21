@@ -1,0 +1,12 @@
+%table#transactions
+  %tr
+    %th Date
+    %th Check #
+    %th Description
+    %th Amount
+  - for transaction in @transactions
+    %tr
+      %td= transaction.settled_on.strftime("%m/%d/%Y")
+      %td= transaction.check_number
+      %td= transaction.description
+      %td= "%.2f" % (transaction.amount / 100.0)
