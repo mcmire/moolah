@@ -8,3 +8,4 @@ Gemfile.old
 Rakefile.old
 spec.old
 *.tmproj
+config/settings.yml

@@ -19,7 +19,10 @@ group :test do
   # test case's #run method (and matchy simply patches it)
   gem 'mocha-protest-integration'
   gem 'mcmire-matchy', ">= 0.5.2", :require => "matchy"
+  # I don't know why capybara doesn't require this automatically...
+  #gem 'launchy', ">= 0.3.5"
   gem 'capybara', ">= 0.3.0"
+  gem 'factory_girl', ">= 1.2.3"
 end
 
 # Padrino

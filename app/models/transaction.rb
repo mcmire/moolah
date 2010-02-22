@@ -1,16 +1,21 @@
+require 'digest/sha1'
+
 class Transaction
   include MongoMapper::Document
   
+  key :_hash, String
   #key :parent_id, Integer
   #key :account_id, Integer
-  key :transaction_type_id, Integer
-  key :category_id, Integer
+  key :transaction_type_id, Integer  # cc, atm, etc.
+  key :category_id, Integer # gas, rent, etc.
   key :check_number, Integer
   key :amount, Integer
   key :original_description, String
   key :description, String
   key :settled_on, Date
   timestamps!
+  
+  before_create :set_hash
   
   def self.import!(file)
     # accepts a String or IO object
@@ -30,9 +35,18 @@ class Transaction
       number = (integer + precision[0..1]).to_i
       number = -number if row[3].present?
       transaction.amount = number
-      transaction.save!
+      transaction.set_hash
+      # Don't add the transaction if it's already been added
+      transaction.save! unless Transaction.exists?(:_hash => transaction._hash)
     end
   ensure
     csv.close
+  end
+  
+  def set_hash
+    self._hash ||= calculate_hash
+  end
+  def calculate_hash
+    Digest::SHA1.hexdigest("#{settled_on}#{check_number}#{original_description}#{amount}")
   end
 end

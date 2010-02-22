@@ -1,12 +1,21 @@
-%table#transactions
-  %tr
-    %th Date
-    %th Check #
-    %th Description
-    %th Amount
-  - for transaction in @transactions
+- if @transactions.any?
+  %table#transactions
     %tr
-      %td= transaction.settled_on.strftime("%m/%d/%Y")
-      %td= transaction.check_number
-      %td= transaction.description
-      %td= "%.2f" % (transaction.amount / 100.0)
+      %th Date
+      %th Check #
+      %th Description
+      %th Amount
+    - for transaction in @transactions
+      %tr
+        %td= transaction.settled_on.strftime("%m/%d/%Y")
+        %td= transaction.check_number
+        %td= transaction.description
+        %td= "%.2f" % (transaction.amount / 100.0)
+- else
+  %p No transactions.
+      
+%p
+  = link_to "Upload transactions", url(:upload)
+  
+%p
+  = link_to "Clear transactions", url(:clear)

@@ -10,7 +10,12 @@ Moolah.controllers do
   end
   post :upload do
     Transaction.import!(params[:file][:tempfile])
-    redirect '/'
+    redirect url(:index)
+  end
+  
+  get :clear do
+    Transaction.delete_all
+    redirect url(:index)
   end
   
 end
