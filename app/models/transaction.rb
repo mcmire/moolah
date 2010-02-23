@@ -21,6 +21,7 @@ class Transaction
     # accepts a String or IO object
     csv = FasterCSV.new(file)
     rows = csv.read
+    num_transactions_saved = 0
     rows.each_with_index do |row, i|
       next if i == 0 # skip header row
       row = row.map {|col| col.strip }
@@ -37,8 +38,12 @@ class Transaction
       transaction.amount = number
       transaction.set_hash
       # Don't add the transaction if it's already been added
-      transaction.save! unless Transaction.exists?(:_hash => transaction._hash)
+      unless Transaction.exists?(:_hash => transaction._hash)
+        transaction.save!
+        num_transactions_saved += 1
+      end
     end
+    num_transactions_saved
   ensure
     csv.close
   end

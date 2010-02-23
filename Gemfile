@@ -28,5 +28,7 @@ end
 # Padrino
 gem 'thin' # or mongrel
 #gem 'padrino', "0.8.5"
-gem 'padrino-core', "0.8.5"
-gem 'padrino-helpers', "0.8.5"
+#gem 'padrino-core', "0.8.5"
+#gem 'padrino-helpers', "0.8.5"
+gem 'padrino-core', "0.8.5", :path => "vendor/padrino-framework/padrino-core"
+gem 'padrino-helpers', "0.8.5", :path => "vendor/padrino-framework/padrino-helpers"

@@ -10,7 +10,6 @@ Protest.feature "Uploading transactions" do
     visit "/upload"
     attach_file "file", "#{TEST_DIR}/fixtures/transactions.csv"
     click "Upload"
-    visit "/"
     tableish('#transactions tr', 'th,td').should == [
       ["Date",        "Check #", "Description",                   "Amount"],
       ["01/14/2008",  "",        "TARGET T0695 C  TARGET T0695",  "-124.88"],
@@ -19,5 +18,15 @@ Protest.feature "Uploading transactions" do
       ["12/31/2007",  "1012",    "CHECK #1012",                   "-250.00"],
       ["12/28/2007",  "",        "PAYROLL",                       "983.39"]
     ]
+    body.should =~ /5 transactions were successfully imported/
+  end
+  scenario "Uploading duplicate transactions" do
+    visit "/upload"
+    attach_file "file", "#{TEST_DIR}/fixtures/transactions.csv"
+    click "Upload"
+    visit "/upload"
+    attach_file "file", "#{TEST_DIR}/fixtures/transactions.csv"
+    click "Upload"
+    body.should =~ /No transactions were imported/
   end
 end

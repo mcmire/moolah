@@ -9,7 +9,12 @@ Moolah.controllers do
     render 'upload'
   end
   post :upload do
-    Transaction.import!(params[:file][:tempfile])
+    num_transactions_saved = Transaction.import!(params[:file][:tempfile])
+    if num_transactions_saved == 0
+      flash[:notice] = "No transactions were imported!"
+    else
+      flash[:success] = "#{num_transactions_saved} " + (num_transactions_saved == 1 ? "transaction" : "transactions") + " were successfully imported."
+    end
     redirect url(:index)
   end
   
