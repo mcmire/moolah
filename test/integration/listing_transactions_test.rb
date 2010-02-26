@@ -15,8 +15,8 @@ Protest.feature "Listing transactions" do
     Factory(:transaction, :settled_on => Date.new(2009, 1, 1), :description => "Some transaction", :amount => -1000)
     visit "/"
     tableish('#transactions tr', 'th,td').should == [
-      ["Date", "Check #", "Description", "Amount"],
-      ["01/01/2009",  "", "Some transaction", "-10.00"],
+      ["", "Date", "Check #", "Description", "Amount"],
+      ["", "01/01/2009",  "", "Some transaction", "-$10.00"],
     ]
   end
 end

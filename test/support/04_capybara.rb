@@ -3,6 +3,7 @@ require 'capybara/dsl' # Needed?
 
 Capybara.app = app
 Capybara.javascript_driver = :culerity
+Capybara.default_selector = :css
 
 Protest::Utils::ColorfulOutput.module_eval do
   def self.colors

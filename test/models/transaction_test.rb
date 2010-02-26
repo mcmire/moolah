@@ -1,6 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + "/test_helper")
 
 Protest.describe Transaction do
+  setup do
+    @transaction = Transaction.new
+  end
+  
   it "gets a SHA1 hash on creation based on the date, check number, original description, and amount" do
     transaction = Transaction.create!(
       :settled_on => Date.new(2009, 1, 1),
@@ -9,6 +13,17 @@ Protest.describe Transaction do
       :amount => -2092
     )
     transaction._hash.should == "38afef6864369e30455d627b136ab6319a705b93"
+  end
+  
+  context '#amount_as_currency' do
+    it "returns the amount formatted as currency" do
+      @transaction.amount = 3929
+      @transaction.amount_as_currency.should == "$39.29"
+    end
+    it "deals with negative numbers correctly" do
+      @transaction.amount = -3929
+      @transaction.amount_as_currency.should == "-$39.29"
+    end
   end
   
   context ".import!" do

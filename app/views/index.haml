@@ -1,16 +1,22 @@
 - if @transactions.any?
-  %table#transactions
-    %tr
-      %th Date
-      %th Check #
-      %th Description
-      %th Amount
-    - for transaction in @transactions
+  - form_tag url(:dispatch) do
+    %p
+      = submit_tag "Delete checked", :name => "delete_checked"
+    %table#transactions
       %tr
-        %td= transaction.settled_on.strftime("%m/%d/%Y")
-        %td= transaction.check_number
-        %td= transaction.description
-        %td= "%.2f" % (transaction.amount / 100.0)
+        %th
+        %th Date
+        %th Check #
+        %th Description
+        %th Amount
+      - for transaction in @transactions
+        %tr{:id => "transaction_#{transaction.id}"}
+          %td= check_box_tag "to_delete[]", :value => transaction.id, :id => "to_delete_#{transaction.id}"
+          %td= transaction.settled_on.strftime("%m/%d/%Y")
+          %td= transaction.check_number
+          %td= transaction.description
+          %td= transaction.amount_as_currency
+          %td= link_to "Delete", url(:delete, :id => transaction.id)
 - else
   %p No transactions.
       

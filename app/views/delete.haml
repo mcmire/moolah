@@ -1,0 +1,13 @@
+- form_tag url(:destroy, :id => @transaction.id), :method => "delete" do
+
+  %p Are you sure you want to delete this transaction?
+
+  %ul
+    %li== <b>#{@transaction.original_description}</b>
+    %li== <b>#{@transaction.amount_as_currency}</b>
+    %li== Settled on <b>#{@transaction.settled_on}</b>
+  
+  %p
+    = submit_tag "Yes, destroy"
+    or
+    = link_to "No, never mind", url(:index)

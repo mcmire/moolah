@@ -17,6 +17,10 @@ class Transaction
   
   before_create :set_hash
   
+  def amount_as_currency
+    (amount < 0 ? "-" : "") + "$" + ("%.2f" % (amount.abs / 100.0))
+  end
+  
   def self.import!(file)
     # accepts a String or IO object
     csv = FasterCSV.new(file)
