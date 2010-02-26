@@ -13,7 +13,7 @@ Moolah.controllers do
     if num_transactions_saved == 0
       flash[:notice] = "No transactions were imported!"
     else
-      flash[:success] = pluralize(num_transactions_saved) + " were successfully imported."
+      flash[:success] = format_message(num_transactions_saved, "transaction", "successfully imported.")
     end
     redirect url(:index)
   end
@@ -42,7 +42,7 @@ Moolah.controllers do
       transactions = Transaction.find(ids)
       transactions.each(&:destroy)
       if transactions.any?
-        flash[:success] = pluralize(num_transactions_saved) + " successfully deleted."
+        flash[:success] = format_message(transactions.size, "transaction", "successfully deleted.")
       else
         flash[:notice] = "No transactions were deleted."
       end
