@@ -30,6 +30,15 @@ Moolah.controller :transactions do
     redirect url(:transactions, :index)
   end
   
+  delete :destroy_multiple do
+    # BUG: MongoMapper's find method doesn't seem to autoconvert an array of id strings (but it does auto-convert a single id)
+    ids = Array(params[:to_delete]).map {|id| Mongo::ObjectID.from_string(id) }
+    transactions = Transaction.find(ids)
+    transactions.each(&:destroy)
+    flash[:success] = format_message(transactions.size, "transaction", "successfully deleted.")
+    redirect url(:transactions, :index)
+  end
+  
   get :clear do
     Transaction.delete_all
     redirect url(:transactions, :index)
@@ -37,22 +46,16 @@ Moolah.controller :transactions do
   
   post :dispatch do
     if params[:delete_checked]
-      # BUG: MongoMapper's find method doesn't seem to autoconvert an array of id strings (but it does auto-convert a single id)
-      ids = Array(params[:to_delete]).map {|id| Mongo::ObjectID.from_string(id) }
-      transactions = Transaction.find(ids)
-      transactions.each(&:destroy)
-      if transactions.any?
-        flash[:success] = format_message(transactions.size, "transaction", "successfully deleted.")
+      if params[:to_delete].present?
+        # BUG: MongoMapper's find method doesn't seem to autoconvert an array of id strings (but it does auto-convert a single id)
+        @ids = Array(params[:to_delete]).map {|id| Mongo::ObjectID.from_string(id) }
+        @transactions = Transaction.find(@ids)
+        render "/transactions/delete_multiple"
       else
-        flash[:notice] = "No transactions were deleted."
+        flash[:notice] = "You didn't select any transactions to delete."
+        redirect url(:transactions, :index)
       end
-      redirect url(:transactions, :index)
     end
-  end
-  
-private
-  def pluralize(number)
-    (number == 1 ? "1 transaction was" : "#{number} transactions were")
   end
   
 end
