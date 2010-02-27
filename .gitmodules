@@ -1,0 +1,3 @@
+[submodule "vendor/padrino-framework"]
+	path = vendor/padrino-framework
+	url = git://github.com/padrino/padrino-framework.git

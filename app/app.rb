@@ -34,6 +34,6 @@ class Moolah < Padrino::Application
   #   end
   #
   
-  layout "app"
+  layout "application"
 
 end

@@ -10,13 +10,13 @@ Protest.feature "Deleting transactions" do
   scenario "Deleting one transaction" do
     trans1 = Factory(:transaction, :original_description => "Transaction 1")
     trans2 = Factory(:transaction, :original_description => "Transaction 2")
-    visit "/"
+    visit "/transactions"
     within("#transaction_#{trans1.id}") do
       click "Delete"
     end
-    current_path.should =~ %r{^/delete}
+    current_path.should =~ %r{^/transactions/delete}
     click "Yes, destroy"
-    current_path.should == "/"
+    current_path.should == "/transactions"
     body.should =~ /Transaction was successfully deleted/
     body.should_not =~ /Transaction 1/
   end
@@ -26,20 +26,20 @@ Protest.feature "Deleting transactions" do
   scenario "Deleting some multiple transactions" do
     trans1 = Factory(:transaction, :original_description => "Transaction 1")
     trans2 = Factory(:transaction, :original_description => "Transaction 2")
-    visit "/"
+    visit "/transactions"
     check "to_delete_#{trans1.id}"
     check "to_delete_#{trans2.id}"
     click "Delete checked"
-    current_path.should == "/"
+    current_path.should == "/transactions"
     body.should =~ /2 transactions were successfully deleted/
   end
   
   scenario "Deleting no multiple transactions" do
     trans1 = Factory(:transaction, :original_description => "Transaction 1")
     trans2 = Factory(:transaction, :original_description => "Transaction 2")
-    visit "/"
+    visit "/transactions"
     click "Delete checked"
-    current_path.should == "/"
+    current_path.should == "/transactions"
     body.should =~ /No transactions were deleted/
   end
 end

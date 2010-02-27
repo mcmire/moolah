@@ -15,7 +15,7 @@ end
 
 def bundler_present?
   begin
-    gem 'bundler', '0.9.5'
+    gem 'bundler', '0.9.7'
     require 'bundler'
     true
   rescue LoadError

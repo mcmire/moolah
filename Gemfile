@@ -18,7 +18,7 @@ group :test do
   # since mocha-protest-integration completely overrides the current
   # test case's #run method (and matchy simply patches it)
   gem 'mocha-protest-integration'
-  gem 'mcmire-matchy', ">= 0.5.2", :require => "matchy"
+  gem 'mcmire-matchy', ">= 0.5.2", :require => nil#, :require => "matchy"
   # I don't know why capybara doesn't require this automatically...
   #gem 'launchy', ">= 0.3.5"
   gem 'capybara', ">= 0.3.0"
@@ -30,5 +30,5 @@ gem 'thin' # or mongrel
 #gem 'padrino', "0.8.5"
 #gem 'padrino-core', "0.8.5"
 #gem 'padrino-helpers', "0.8.5"
-gem 'padrino-core', "0.8.5", :path => "vendor/padrino-framework/padrino-core"
-gem 'padrino-helpers', "0.8.5", :path => "vendor/padrino-framework/padrino-helpers"
+gem 'padrino-core', "0.9.1"#, :path => "vendor/padrino-framework/padrino-core"
+gem 'padrino-helpers', "0.9.1"#, :path => "vendor/padrino-framework/padrino-helpers"

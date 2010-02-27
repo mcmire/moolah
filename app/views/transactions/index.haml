@@ -1,5 +1,5 @@
 - if @transactions.any?
-  - form_tag url(:dispatch) do
+  - form_tag url(:transactions, :dispatch) do
     %p
       = submit_tag "Delete checked", :name => "delete_checked"
     %table#transactions
@@ -16,12 +16,12 @@
           %td= transaction.check_number
           %td= transaction.description
           %td= transaction.amount_as_currency
-          %td= link_to "Delete", url(:delete, :id => transaction.id)
+          %td= link_to "Delete", url(:transactions, :delete, :id => transaction.id)
 - else
   %p No transactions.
       
 %p
-  = link_to "Upload transactions", url(:upload)
+  = link_to "Upload transactions", url(:transactions, :upload)
   
 %p
-  = link_to "Clear transactions", url(:clear)
+  = link_to "Clear transactions", url(:transactions, :clear)

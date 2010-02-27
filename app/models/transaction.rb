@@ -3,7 +3,7 @@ require 'digest/sha1'
 class Transaction
   include MongoMapper::Document
   
-  key :_hash, String
+  key :sha1, String
   #key :parent_id, Integer
   #key :account_id, Integer
   key :transaction_type_id, Integer  # cc, atm, etc.
@@ -15,7 +15,7 @@ class Transaction
   key :settled_on, Date
   timestamps!
   
-  before_create :set_hash
+  before_create :store_sha1
   
   def amount_as_currency
     (amount < 0 ? "-" : "") + "$" + ("%.2f" % (amount.abs / 100.0))
@@ -40,9 +40,9 @@ class Transaction
       number = (integer + precision[0..1]).to_i
       number = -number if row[3].present?
       transaction.amount = number
-      transaction.set_hash
+      transaction.sha1 = transaction.calculate_sha1
       # Don't add the transaction if it's already been added
-      unless Transaction.exists?(:_hash => transaction._hash)
+      unless Transaction.exists?(:sha1 => transaction.sha1)
         transaction.save!
         num_transactions_saved += 1
       end
@@ -52,10 +52,10 @@ class Transaction
     csv.close
   end
   
-  def set_hash
-    self._hash ||= calculate_hash
+  def store_sha1
+    self.sha1 ||= calculate_sha1
   end
-  def calculate_hash
+  def calculate_sha1
     Digest::SHA1.hexdigest("#{settled_on}#{check_number}#{original_description}#{amount}")
   end
 end

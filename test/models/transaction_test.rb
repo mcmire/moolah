@@ -12,7 +12,7 @@ Protest.describe Transaction do
       :original_description => "A transaction",
       :amount => -2092
     )
-    transaction._hash.should == "38afef6864369e30455d627b136ab6319a705b93"
+    transaction.sha1.should == "38afef6864369e30455d627b136ab6319a705b93"
   end
   
   context '#amount_as_currency' do

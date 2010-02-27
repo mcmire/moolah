@@ -1,5 +1,9 @@
 Moolah.helpers do
   
+  def format_title(title)
+    [Moolah[:window_title], @title].select {|x| x.present? }.join(": ")
+  end
+  
   def format_message(number, thing, msg)
     out = ""
     out += (number == 0) ? "No" : pluralize(number, thing)

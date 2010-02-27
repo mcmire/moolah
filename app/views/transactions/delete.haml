@@ -1,4 +1,4 @@
-- form_tag url(:destroy, :id => @transaction.id), :method => "delete" do
+- form_tag url(:transactions, :destroy, :id => @transaction.id), :method => "delete" do
 
   %p Are you sure you want to delete this transaction?
 
@@ -10,4 +10,4 @@
   %p
     = submit_tag "Yes, destroy"
     or
-    = link_to "No, never mind", url(:index)
+    = link_to "No, never mind", url(:transactions, :index)

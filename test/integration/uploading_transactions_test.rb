@@ -7,7 +7,7 @@ Protest.feature "Uploading transactions" do
     So that I do not have to spend time entering all of them by hand
   EOT
   scenario "Uploading a CSV of transactions" do
-    visit "/upload"
+    visit "/transactions/upload"
     attach_file "file", "#{TEST_DIR}/fixtures/transactions.csv"
     click "Upload"
     tableish('#transactions tr', 'th,td').should == [
@@ -21,10 +21,10 @@ Protest.feature "Uploading transactions" do
     body.should =~ /5 transactions were successfully imported/
   end
   scenario "Uploading duplicate transactions" do
-    visit "/upload"
+    visit "/transactions/upload"
     attach_file "file", "#{TEST_DIR}/fixtures/transactions.csv"
     click "Upload"
-    visit "/upload"
+    visit "/transactions/upload"
     attach_file "file", "#{TEST_DIR}/fixtures/transactions.csv"
     click "Upload"
     body.should =~ /No transactions were imported/

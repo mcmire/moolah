@@ -3,6 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../lib/require_benchmarking'
 
 PADRINO_ENV = 'test' unless defined?(PADRINO_ENV)
 RequireBenchmarking.measuring_requires do
+  puts "Loading environment, please wait..."
   require File.expand_path(File.dirname(__FILE__) + "/../config/boot")
 end
 

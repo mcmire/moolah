@@ -1,5 +1,5 @@
 #gem 'mcmire-matchy'
-#require 'matchy'
+require 'matchy'
 
 # Matchy/Protest integration
 Matchy.adapter :protest, "Protest" do

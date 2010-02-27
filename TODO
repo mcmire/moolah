@@ -1,0 +1,16 @@
+TODO
+
+* Confirmation on multiple delete
+* Javascript confirmation on multiple and single delete, with fallback (a little jQuery plugin)
+* Tabs for checking and savings account
+* Ability to edit description, category, and other details of a transaction
+* Ability to add a transaction manually
+* Graphs (using graphael)
+  - monthly and biweekly income
+  - monthly and biweekly expenses (by category)
+  - monthly and biweekly net worth
+  - monthly and biweekly income rate (with avg line)
+* Upon import, show a line in between current import and existing data (so we know what we've imported)
+* Auto-categorization of transactions upon import (categorization rules, like Mint)
+* Sort by column in transactions list
+* CSSify this biatch!
