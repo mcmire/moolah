@@ -1,6 +1,5 @@
 TODO
 
-* Confirmation on multiple delete
 * Javascript confirmation on multiple and single delete, with fallback (a little jQuery plugin)
 * Tabs for checking and savings account
 * Ability to edit description, category, and other details of a transaction

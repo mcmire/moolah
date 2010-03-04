@@ -1,7 +1,10 @@
+- content_for :head do
+  = javascript_include_tag "lib/restful_destroy", "transactions/index"
+
 - if @transactions.any?
-  - form_tag url(:transactions, :dispatch) do
+  - form_tag url(:transactions, :dispatch), :id => "form" do
     %p
-      = submit_tag "Delete checked", :name => "delete_checked"
+      = submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :class => "delete", :title => "Are you sure you want to delete these transactions?"
     %table#transactions
       %tr
         %th
@@ -16,7 +19,7 @@
           %td= transaction.check_number
           %td= transaction.description
           %td= transaction.amount_as_currency
-          %td= link_to "Delete", url(:transactions, :delete, :id => transaction.id)
+          %td= link_to "Delete", url(:transactions, :delete, :id => transaction.id), :class => "delete", :title => "Are you sure you want to delete this transaction?"
 - else
   %p No transactions.
       

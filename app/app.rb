@@ -35,5 +35,12 @@ class Moolah < Padrino::Application
   #
   
   layout "application"
+  
+  configure :test do
+    # Sinatra < 1.0 always disable sessions for the test environment, so if you
+    # need them it's necessary to force the use of Rack::Session::Cookie.
+    # (You can handle all Padrino applications using `Padrino.application` instead.)
+    use Rack::Session::Cookie
+  end
 
 end

@@ -21,8 +21,6 @@ Protest.feature "Deleting transactions" do
     body.should_not =~ /Transaction 1/
   end
   
-  scenario "Deleting one transaction (Javascript)"
-  
   scenario "Deleting some multiple transactions" do
     trans1 = Factory(:transaction, :original_description => "Transaction 1")
     trans2 = Factory(:transaction, :original_description => "Transaction 2")
@@ -35,8 +33,6 @@ Protest.feature "Deleting transactions" do
     body.should =~ /2 transactions were successfully deleted/
   end
   
-  scenario "Deleting some multiple transactions (Javascript)"
-  
   scenario "Deleting no multiple transactions" do
     trans1 = Factory(:transaction, :original_description => "Transaction 1")
     trans2 = Factory(:transaction, :original_description => "Transaction 2")
@@ -44,5 +40,21 @@ Protest.feature "Deleting transactions" do
     click "Delete checked"
     current_path.should == "/transactions"
     body.should =~ /You didn't select any transactions to delete/
+  end
+  
+  javascript_scenarios do
+    scenario "Deleting one transaction" do
+      trans1 = Factory(:transaction, :original_description => "Transaction 1")
+      trans2 = Factory(:transaction, :original_description => "Transaction 2")
+      visit "/transactions"
+      browser.confirm(true) do
+        within("#transaction_#{trans1.id}") do
+          click "Delete"
+        end
+      end
+      current_path.should == "/transactions"
+      body.should =~ /Transaction was successfully deleted/
+      body.should_not =~ /Transaction 1/
+    end
   end
 end

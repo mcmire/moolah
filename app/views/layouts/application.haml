@@ -2,6 +2,12 @@
 %html
   %head
     %title= format_title(@title)
+    = javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js", "vendor/jquery.form.js"
+    = yield_content :head
+    %style(type="text/css")
+      = yield_content :head_styles
+    %script(type="text/javascript" language="javascript")
+      = yield_content :head_scripts
   %body
     = message_divs
     = yield
