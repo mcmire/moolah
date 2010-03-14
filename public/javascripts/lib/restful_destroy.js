@@ -40,9 +40,4 @@ $(function() {
     }
     event.preventDefault();
   })
-  
-  $('input[type=submit].delete').click(function(event) {
-    if (confirm(this.title)) return true;
-    else event.preventDefault();
-  });
 })

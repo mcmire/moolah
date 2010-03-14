@@ -2,8 +2,8 @@ TODO
 
 X Javascript confirmation on multiple and single delete, with fallback (a little jQuery plugin)
 X Tabs for checking and savings account
-* Ability to edit description, category, and other details of a transaction
-* Ability to add a transaction manually
+X Ability to edit description, category, and other details of a transaction
+X Ability to add a transaction manually
 * Destroy multiple is broken?
 * Javascript add/edit
 * Graphs (using graphael)

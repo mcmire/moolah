@@ -16,7 +16,7 @@ Moolah.helpers do
     unless options[:url]
       controller_name = record.class.to_s.downcase.pluralize.to_sym
       if record.new_record?
-        url = url(controller_name, :create, :id => record.id)
+        url = url(controller_name, :create)
         method = "post"
       else
         url = url(controller_name, :update, :id => record.id)

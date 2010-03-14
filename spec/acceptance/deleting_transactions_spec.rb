@@ -16,7 +16,7 @@ feature "Deleting transactions" do
     end
     current_path.should =~ %r|^/transactions/([^/]+)/delete$|
     click "Yes, delete"
-    current_path.should == "/transactions"
+    current_path.should == "/transactions/"
     body.should =~ /Transaction was successfully deleted/
     body.should_not =~ /Transaction 1/
   end
@@ -29,7 +29,7 @@ feature "Deleting transactions" do
     check "to_delete_#{trans2.id}"
     click "Delete checked"
     click "Yes, delete"
-    current_path.should == "/transactions"
+    current_path.should == "/transactions/"
     body.should =~ /2 transactions were successfully deleted/
   end
   
@@ -38,7 +38,7 @@ feature "Deleting transactions" do
     trans2 = Factory(:transaction, :original_description => "Transaction 2")
     visit "/transactions"
     click "Delete checked"
-    current_path.should == "/transactions"
+    current_path.should == "/transactions/"
     body.should =~ /You didn't select any transactions to delete/
   end
   
@@ -52,26 +52,26 @@ feature "Deleting transactions" do
           click "Delete"
         end
       end
-      current_path.should == "/transactions"
+      current_path.should == "/transactions/"
       body.should =~ /Transaction was successfully deleted/
       body.should_not =~ /Transaction 1/
     end
     
     # FIXME: This is currently failing for some reason?!?
-    #scenario "Deleting some multiple transactions" do
-    #  trans1 = Factory(:transaction, :original_description => "Transaction 1")
-    #  trans2 = Factory(:transaction, :original_description => "Transaction 2")
-    #  visit "/transactions"
-    #  #body.should_not =~ /No transactions/
-    #  check "to_delete_#{trans1.id}"
-    #  check "to_delete_#{trans2.id}"
-    #  browser.confirm(true) do
-    #    within('#form') do
-    #      click_button "Delete checked"
-    #    end
-    #  end
-    #  #current_path.should == "/transactions"
-    #  body.should =~ /2 transactions were successfully deleted/
-    #end
+    scenario "Deleting some multiple transactions" do
+      trans1 = Factory(:transaction, :original_description => "Transaction 1")
+      trans2 = Factory(:transaction, :original_description => "Transaction 2")
+      visit "/transactions"
+      #body.should_not =~ /No transactions/
+      check "to_delete_#{trans1.id}"
+      check "to_delete_#{trans2.id}"
+      browser.confirm(true) do
+        within('#form') do
+          click_button "Delete checked"
+        end
+      end
+      #current_path.should == "/transactions"
+      body.should =~ /2 transactions were successfully deleted/
+    end
   end
 end
