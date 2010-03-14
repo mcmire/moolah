@@ -7,8 +7,9 @@ def jeweler_present?
   begin
     require 'jeweler'
     true
-  rescue LoadError
+  rescue LoadError => e
     puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+    puts e.message
     false
   end
 end
@@ -18,8 +19,9 @@ def bundler_present?
     gem 'bundler', '0.9.7'
     require 'bundler'
     true
-  rescue LoadError
+  rescue LoadError => e
     puts "Bundler (or a dependency) not available. Install it with: gem install bundler"
+    puts e.message
   end
 end
 

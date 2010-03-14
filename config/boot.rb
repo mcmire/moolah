@@ -1,3 +1,7 @@
+#puts "config/boot.rb loaded, from:"
+#puts caller
+#puts
+
 # Defines our constants
 PADRINO_ENV  = ENV["PADRINO_ENV"] ||= ENV["RACK_ENV"] ||= "development" unless defined?(PADRINO_ENV)
 PADRINO_ROOT = File.expand_path(File.dirname(__FILE__) + '/..') unless defined? PADRINO_ROOT
@@ -14,10 +18,10 @@ RequireProfiling.profile do
     require 'rubygems'
     gem 'bundler', '0.9.7'
     require 'bundler'
-    Bundler.setup(:default, PADRINO_ENV)
+    Bundler.setup(:default, PADRINO_ENV.to_sym)
   end
 
-  Bundler.require(:default, PADRINO_ENV)
+  Bundler.require(:default, PADRINO_ENV.to_sym)
   #puts "=> Located #{Padrino.bundle} Gemfile for #{Padrino.env}"
   puts
 
