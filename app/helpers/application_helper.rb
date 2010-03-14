@@ -1,6 +1,6 @@
 Moolah.helpers do
   
-  def format_title(title)
+  def window_title(title)
     [Moolah[:window_title], @title].select {|x| x.present? }.join(": ")
   end
   

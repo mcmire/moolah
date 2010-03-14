@@ -1,21 +1,26 @@
 Moolah.controller :transactions do
   
-  get :index do
-    @transactions = Transaction.all(:order => "settled_on desc")
+  get :index, :map => "/transactions(/:account_id(/))" do
+    @account_id = params[:account_id]
+    options = {:order => "settled_on desc"}
+    options[:account_id] = @account_id if @account_id
+    @transactions = Transaction.all(options)
     render 'transactions/index'
   end
   
-  get :upload do
+  get :upload, :map => "/transactions/:account_id/upload" do
+    @account_id = params[:account_id]
     render 'transactions/upload'
   end
-  post :upload do
-    num_transactions_saved = Transaction.import!(params[:file][:tempfile])
+  post :upload, :map => "/transactions/:account_id/upload" do
+    account_id = params[:account_id]
+    num_transactions_saved = Transaction.import!(params[:file][:tempfile], account_id)
     if num_transactions_saved == 0
       flash[:notice] = "No transactions were imported!"
     else
       flash[:success] = format_message(num_transactions_saved, "transaction", "successfully imported.")
     end
-    redirect url(:transactions, :index)
+    redirect url(:transactions, :index, :account_id => params[:account_id])
   end
   
   get :delete, :with => :id do

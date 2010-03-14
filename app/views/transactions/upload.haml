@@ -1,4 +1,6 @@
-- form_tag url(:transactions, :upload), :multipart => true do
+- @title = "Upload to #{@account_id}"
+
+- form_tag url(:transactions, :upload, :account_id => @account_id), :multipart => true do
   %p
     %label(for="file") File
     %input(type="file" id="file" name="file")
@@ -6,4 +8,4 @@
     %button(type="submit") Upload
 
 %p
-  = link_to "View transactions", url(:transactions, :index)
+  = link_to "Return to list", url(:transactions, :index, :account_id => @account_id)

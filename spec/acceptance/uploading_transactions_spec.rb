@@ -6,9 +6,10 @@ feature "Uploading transactions" do
     I want to be able to upload a CSV of my transactions
     So that I do not have to spend time entering all of them by hand
   EOT
+  
   scenario "Uploading a CSV of transactions" do
-    visit "/transactions/upload"
-    attach_file "file", "#{TEST_DIR}/fixtures/transactions.csv"
+    visit "/transactions/checking/upload"
+    attach_file "file", "#{PADRINO_ROOT}/spec/fixtures/transactions.csv"
     click "Upload"
     tableish('#transactions tr', 'th,td').should == [
       ["", "Date",        "Check #", "Description",                   "Amount"],
@@ -20,12 +21,13 @@ feature "Uploading transactions" do
     ]
     body.should =~ /5 transactions were successfully imported/
   end
+  
   scenario "Uploading duplicate transactions" do
-    visit "/transactions/upload"
-    attach_file "file", "#{TEST_DIR}/fixtures/transactions.csv"
+    visit "/transactions/checking/upload"
+    attach_file "file", "#{PADRINO_ROOT}/spec/fixtures/transactions.csv"
     click "Upload"
-    visit "/transactions/upload"
-    attach_file "file", "#{TEST_DIR}/fixtures/transactions.csv"
+    visit "/transactions/checking/upload"
+    attach_file "file", "#{PADRINO_ROOT}/spec/fixtures/transactions.csv"
     click "Upload"
     body.should =~ /No transactions were imported/
   end

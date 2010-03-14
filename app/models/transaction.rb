@@ -5,7 +5,7 @@ class Transaction
   
   key :sha1, String
   #key :parent_id, Integer
-  #key :account_id, Integer
+  key :account_id, String # checking, savings
   key :transaction_type_id, Integer  # cc, atm, etc.
   key :category_id, Integer # gas, rent, etc.
   key :check_number, Integer
@@ -15,13 +15,15 @@ class Transaction
   key :settled_on, Date
   timestamps!
   
+  belongs_to :account
+  
   before_create :store_sha1
   
   def amount_as_currency
     (amount < 0 ? "-" : "") + "$" + ("%.2f" % (amount.abs / 100.0))
   end
   
-  def self.import!(file)
+  def self.import!(file, account_id)
     # accepts a String or IO object
     csv = FasterCSV.new(file)
     rows = csv.read
@@ -30,6 +32,7 @@ class Transaction
       next if i == 0 # skip header row
       row = row.map {|col| col.strip }
       transaction = Transaction.new(
+        :account_id => account_id,
         :settled_on => Date.fast_parse(row[0]),
         :check_number => row[1],
         :original_description => row[2],
@@ -56,6 +59,6 @@ class Transaction
     self.sha1 ||= calculate_sha1
   end
   def calculate_sha1
-    Digest::SHA1.hexdigest("#{settled_on}#{check_number}#{original_description}#{amount}")
+    Digest::SHA1.hexdigest("#{account_id}#{settled_on}#{check_number}#{original_description}#{amount}")
   end
 end

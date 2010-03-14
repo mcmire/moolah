@@ -1,7 +1,7 @@
 !!! 5
 %html
   %head
-    %title= format_title(@title)
+    %title= window_title(@title)
     = javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js", "vendor/jquery.form.js"
     = yield_content :head
     %style(type="text/css")
@@ -9,5 +9,7 @@
     %script(type="text/javascript" language="javascript")
       = yield_content :head_scripts
   %body
+    %h1 Moolah
+    %h2= @title if @title
     = message_divs
     = yield

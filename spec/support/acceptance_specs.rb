@@ -7,13 +7,6 @@ Capybara.run_server = false
 Capybara.default_selector = :css
 Capybara.debug = true
 
-RUN_JAVASCRIPT_TESTS = 
-  if File.exists?("tmp/acceptance_spec.opts")
-    !!YAML.load_file("tmp/acceptance_spec.opts")[:javascript]
-  else
-    false
-  end
-
 module Capybara
   class Server
     # Added: extracted from #is_port_open? so that the Celerity driver can access it
@@ -137,7 +130,8 @@ class AcceptanceExampleGroup < Spec::Example::ExampleGroup
     end
     
     def under_javascript(&block)
-      return unless RUN_JAVASCRIPT_TESTS
+      run_javascript_tests = File.exists?("tmp/acceptance_spec.opts") && !!YAML.load_file("tmp/acceptance_spec.opts")[:javascript]
+      return unless run_javascript_tests
       describe "(under Javascript)" do
         # Copied from Capybara's Cucumber mixin
         before do
