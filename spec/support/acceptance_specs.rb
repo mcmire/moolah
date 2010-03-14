@@ -111,6 +111,11 @@ end
 class AcceptanceExampleGroup < Spec::Example::ExampleGroup
   include Capybara
   include Cucumber::Tableish
+  
+  after do
+    # Reset sessions so that things like session[:whatever] do not carry over into other tests
+    Capybara.reset_sessions!
+  end
 
   module JavascriptExampleMethods
     def browser
@@ -139,9 +144,6 @@ class AcceptanceExampleGroup < Spec::Example::ExampleGroup
         end
         after do
           Capybara.use_default_driver
-        end
-        after :all do
-          Capybara.reset_sessions!
         end
         include JavascriptExampleMethods
         instance_eval(&block)

@@ -12,4 +12,18 @@ Moolah.helpers do
     out
   end
   
+  def resourceful_form_for(record, options={}, &block)
+    unless options[:url]
+      controller_name = record.class.to_s.downcase.pluralize.to_sym
+      if record.new_record?
+        url = url(controller_name, :create, :id => record.id)
+        method = "post"
+      else
+        url = url(controller_name, :update, :id => record.id)
+        method = "put"
+      end
+    end
+    form_for(record, url || settings[:url], {:method => method}.merge(settings[:html] || {}), &block)
+  end
+  
 end

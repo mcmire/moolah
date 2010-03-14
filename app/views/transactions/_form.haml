@@ -1,0 +1,27 @@
+- resourceful_form_for transaction, :html => {:id => "stylish"} do |f|
+  = f.error_messages
+  %div
+    = label_tag "transaction_kind"
+    = select_tag "transaction_kind", :options => [["Debit", "debit"], ["Credit", "credit"]], :value => transaction.kind
+  %div
+    = f.label :account_id
+    = f.select :account_id, :options => [["Checking", "checking"], ["Savings", "savings"]]
+  %div
+    %label Original description:
+    = transaction.original_description
+  %div
+    = f.label :check_number
+    = f.text_field :check_number, :size => 4
+  %div
+    = f.label :description
+    = f.text_field :description, :size => 50
+  %div
+    = f.label :amount
+    = f.text_field :amount, :size => 6, :value => (transaction.amount_as_decimal if transaction.amount)
+  %div
+    = f.label :settled_on
+    = f.text_field :settled_on, :size => 12
+  %div
+    = f.submit button_text
+    or
+    = link_to "Cancel", url(:transactions, :index, :account_id => last_account_id)

@@ -5,6 +5,12 @@ describe Transaction do
     @transaction = Transaction.new
   end
   
+  it "can't be saved if the amount is 0" do
+    @transaction.amount = 0
+    @transaction.save
+    Array(@transaction.errors.on(:amount)).should include("cannot be zero")
+  end
+  
   it "gets a SHA1 hash on creation based on the account, date, check number, original description, and amount" do
     transaction = Transaction.create!(
       :account_id => "checking",
@@ -13,7 +19,18 @@ describe Transaction do
       :original_description => "A transaction",
       :amount => -2092
     )
-    transaction.sha1.should == "2960f00482653857980e9157e55e33aba27ec986"
+    transaction.sha1.should == "c40d4a8a92d643df6d4d8e4851f948b9a0254ea4"
+  end
+  
+  context '#type' do
+    it "returns debit if the amount is under 0" do
+      @transaction.amount = -1
+      @transaction.kind.should == "debit"
+    end
+    it "returns credit if the amount is above 0" do
+      @transaction.amount = 1
+      @transaction.kind.should == "credit"
+    end
   end
   
   context '#amount_as_currency' do
@@ -24,6 +41,17 @@ describe Transaction do
     it "deals with negative numbers correctly" do
       @transaction.amount = -3929
       @transaction.amount_as_currency.should == "-$39.29"
+    end
+  end
+  
+  context '#amount_as_decimal' do
+    it "converts the amount to a decimal number" do
+      @transaction.amount = 3939
+      @transaction.amount_as_decimal.should == 39.39
+    end
+    it "removes the negative sign" do
+      @transaction.amount = -2929
+      @transaction.amount_as_decimal.should == 29.29
     end
   end
   

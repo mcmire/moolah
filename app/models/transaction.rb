@@ -9,7 +9,7 @@ class Transaction
   key :transaction_type_id, Integer  # cc, atm, etc.
   key :category_id, Integer # gas, rent, etc.
   key :check_number, Integer
-  key :amount, Integer
+  key :amount, Float
   key :original_description, String
   key :description, String
   key :settled_on, Date
@@ -19,8 +19,18 @@ class Transaction
   
   before_create :store_sha1
   
+  validate :amount_must_not_be_zero
+  
+  def kind
+    (amount > 0 ? "credit" : "debit")
+  end
+  
   def amount_as_currency
     (amount < 0 ? "-" : "") + "$" + ("%.2f" % (amount.abs / 100.0))
+  end
+  
+  def amount_as_decimal
+    amount.abs / 100.0
   end
   
   def self.import!(file, account_id)
@@ -42,6 +52,8 @@ class Transaction
       integer, precision = number.split(".")
       number = (integer + precision[0..1]).to_i
       number = -number if row[3].present?
+      # MongoMapper: Something interesting is that this doesn't cast
+      # the number to an int if the key is int (even though update_attributes/attributes= does)
       transaction.amount = number
       transaction.sha1 = transaction.calculate_sha1
       # Don't add the transaction if it's already been added
@@ -60,5 +72,9 @@ class Transaction
   end
   def calculate_sha1
     Digest::SHA1.hexdigest("#{account_id}#{settled_on}#{check_number}#{original_description}#{amount}")
+  end
+  
+  def amount_must_not_be_zero
+    self.errors.add(:amount, "cannot be zero") if amount == 0
   end
 end

@@ -19,6 +19,8 @@
         %th Check #
         %th Description
         %th Amount
+        %td
+        %td
       - for transaction in @transactions
         %tr{:id => "transaction_#{transaction.id}"}
           %td= check_box_tag "to_delete[]", :value => transaction.id, :id => "to_delete_#{transaction.id}"
@@ -26,12 +28,15 @@
           %td= transaction.check_number
           %td= transaction.description
           %td= transaction.amount_as_currency
+          %td= link_to "Edit", url(:transactions, :edit, :id => transaction.id)
           %td= link_to "Delete", url(:transactions, :delete, :id => transaction.id), :class => "delete", :title => "Are you sure you want to delete this transaction?"
 - else
   %p No transactions.
 
 - if @account_id
   %p= link_to "Upload transactions to #{@account_id}", url(:transactions, :upload, :account_id => @account_id)
+
+%p= link_to "Add a new transaction", url(:transactions, :new)
 
 %hr
 

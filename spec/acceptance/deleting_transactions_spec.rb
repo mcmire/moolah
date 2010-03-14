@@ -14,7 +14,7 @@ feature "Deleting transactions" do
     within("#transaction_#{trans1.id}") do
       click "Delete"
     end
-    current_path.should =~ %r|^/transactions/delete|
+    current_path.should =~ %r|^/transactions/([^/]+)/delete$|
     click "Yes, delete"
     current_path.should == "/transactions"
     body.should =~ /Transaction was successfully deleted/
