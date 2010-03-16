@@ -42,5 +42,10 @@ class Moolah < Padrino::Application
     # (You can handle all Padrino applications using `Padrino.application` instead.)
     use Rack::Session::Cookie
   end
+  
+  configure do
+    # use Rack::LessCss, :less_path => "#{PADRINO_ROOT}/app/stylesheets", :css_route => "/stylesheets"
+    use Rack::TrailingSlash
+  end
 
 end
