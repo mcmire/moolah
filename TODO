@@ -4,14 +4,15 @@ X Javascript confirmation on multiple and single delete, with fallback (a little
 X Tabs for checking and savings account
 X Ability to edit description, category, and other details of a transaction
 X Ability to add a transaction manually
-* Destroy multiple is broken?
-* Javascript add/edit
+X Destroy multiple is broken?
 * Graphs (using graphael)
+  - overall balance
   - monthly and biweekly income
   - monthly and biweekly expenses (by category)
   - monthly and biweekly net worth
   - monthly and biweekly income rate (with avg line)
-* Upon import, show a line in between current import and existing data (so we know what we've imported)
 * Auto-categorization of transactions upon import (categorization rules, like Mint)
-* Sort by column in transactions list
 * CSSify this biatch! (reset stylesheet, vertical rhythm, etc.)
+* Javascript add/edit
+* Upon import, show a line in between current import and existing data (so we know what we've imported)
+* Sort by column in transactions list

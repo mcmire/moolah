@@ -33,6 +33,8 @@ class Transaction
     amount.abs / 100.0
   end
   
+  # TODO: Instead of saving each transaction one by one,
+  # is there a way we can save them all at once?
   def self.import!(file, account_id)
     # accepts a String or IO object
     csv = FasterCSV.new(file)

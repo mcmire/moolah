@@ -47,5 +47,7 @@ class Moolah < Padrino::Application
     # use Rack::LessCss, :less_path => "#{PADRINO_ROOT}/app/stylesheets", :css_route => "/stylesheets"
     use Rack::TrailingSlash
   end
+  
+  require 'pp'
 
 end
