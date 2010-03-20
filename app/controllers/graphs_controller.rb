@@ -5,23 +5,38 @@ Moolah.controller :graphs do
   end
   
   get :balance do
-    @data = Transaction::Graph.get_balance_data
-    @graph = "balance"
     @title = "Balance"
+    @graph_options = Transaction::Graph.balance.merge(
+      :title => @title
+    )
+    @graph = "balance"
     render "graphs/show"
   end
   
   get :checking_balance do
-    @data = Transaction::Graph.get_checking_balance_data
-    @graph = "balance"
     @title = "Checking Balance"
+    @graph_options = Transaction::Graph.checking_balance.merge(
+      :title => @title
+    )
+    @graph = "balance"
     render "graphs/show"
   end
   
   get :savings_balance do
-    @data = Transaction::Graph.get_savings_balance_data
-    @graph = "balance"
     @title = "Savings Balance"
+    @graph_options = Transaction::Graph.savings_balance.merge(
+      :title => @title
+    )
+    @graph = "balance"
+    render "graphs/show"
+  end
+  
+  get :monthly_income do
+    @title = "Monthly Income"
+    @graph_options = Transaction::Graph.monthly_income.merge(
+      :title => @title
+    )
+    @graph = "income"
     render "graphs/show"
   end
   

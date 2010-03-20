@@ -1,35 +1,38 @@
 function drawGraph(options) {
-  if (!options.data || options.data.length == 0) return;
-  var firstDate = new Date(options.data[0][0]);
-  var minDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), 1);
+  //if (!options.data || !options.data.length == 0) return;
   $('#graph').html("");
   $.jqplot('graph', [options.data], {
     axes: {
       xaxis: {
-        renderer: $.jqplot.DateAxisRenderer,
-        rendererOptions: { tickRenderer: $.jqplot.CanvasAxisTickRenderer },
+        ticks: options.xlabels,
+        renderer: $.jqplot.CategoryAxisRenderer,
+        rendererOptions: { tickRenderer: $.jqplot.CanvasAxisTickRenderer }/*,
         tickOptions: {
-          formatString: "%m/%d/%y",
-          angle: -30,
-          tickInterval: "1 month",
-          min: minDate
-        }
+          angle: -30
+        }*/
       },
       yaxis: {
+        tickInterval: 500,
+        //min: 0,
         autoscale: true,
         rendererOptions: { tickRenderer: $.jqplot.CanvasAxisTickRenderer },
         tickOptions: {
           formatter: $.jqplot.CurrencyTickFormatter
-        },
-        tickInterval: 500,
-        min: 0
+        }
       }
     },
     series: [{
       label: options.title,
       lineWidth: 2,
-      showMarker: false
+      showMarker: false,
+      renderer: $.jqplot.BarRenderer,
+      rendererOptions: {barPadding: 8, barMargin: 20}
     }],
+    cursor: {
+      show: false,
+      showCursorLegend: true
+    }
+    /*,
     cursor: {  
       showVerticalLine: true,
       showHorizontalLine: false,
@@ -38,6 +41,6 @@ function drawGraph(options) {
       zoom: true,
       intersectionThreshold: 5,
       cursorLegendFormatString: '%s x: %s, y: %s'
-    }
+    }*/
   })
 }

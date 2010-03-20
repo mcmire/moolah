@@ -1,16 +1,11 @@
 - content_for :head do
-  = javascript_include_tag "vendor/jquery.jqplot.js", "vendor/jqplot.dateAxisRenderer.js", "vendor/jqplot.canvasTextRenderer.js", "vendor/jqplot.canvasAxisTickRenderer.js", "vendor/jqplot.cursor.js"
-  = javascript_include_tag "graphs/#{@graph}"
+  = jqplot_javascripts
+  = javascript_include_tag "graphs", "graphs/#{@graph}"
   = stylesheet_link_tag "vendor/jquery.jqplot.css"
-  :style
-    jqplot-yaxis {
-      width: 60px
-    }
 
 %p= link_to "&laquo; Return to graphs", url(:graphs, :index)
 
 #graph(style="width: 800px; height: 400px") No data to show, sorry!
 
 :javascript
-  var data = #{@data.to_json};
-  drawGraph(data, "#{@title}");
+  drawGraph(#{@graph_options.to_json});
