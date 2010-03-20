@@ -6,13 +6,13 @@
     = '(' + %w(all checking savings).map {|x| link_to(x, (x == "all" ? "/graphs/balance" : "/graphs/#{x}_balance")) }.join(", ") + ')'
   %li
     Income
-    = '(' + %w(monthly biweekly).map {|x| link_to(x, "/graphs/#{x}_income") }.join(", ") + ')'
+    = '(' + %w(monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_income") }.join(", ") + ')'
   %li 
     Expenses
-    = '(' + %w(monthly biweekly).map {|x| link_to(x, "/graphs/#{x}_expenses") }.join(", ") + ')'
+    = '(' + %w(monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_expenses") }.join(", ") + ')'
   %li
     Net worth
-    = '(' + %w(monthly biweekly).map {|x| link_to(x, "/graphs/#{x}_net_worth") }.join(", ") + ')'
+    = '(' + %w(monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_net_worth") }.join(", ") + ')'
   %li
     Income rate
-    = '(' + %w(monthly biweekly).map {|x| link_to(x, "/graphs/#{x}_income_rate") }.join(", ") + ')'
+    = '(' + %w(monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_income_rate") }.join(", ") + ')'

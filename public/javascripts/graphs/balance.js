@@ -11,6 +11,7 @@ function drawGraph(options) {
         tickOptions: {
           formatString: "%m/%d/%y",
           angle: -30,
+          // not working??
           tickInterval: "1 month",
           min: minDate
         }
@@ -21,7 +22,7 @@ function drawGraph(options) {
         tickOptions: {
           formatter: $.jqplot.CurrencyTickFormatter
         },
-        tickInterval: 500,
+        tickInterval: 1500,
         min: 0
       }
     },

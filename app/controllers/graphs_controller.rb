@@ -40,9 +40,9 @@ Moolah.controller :graphs do
     render "graphs/show"
   end
   
-  get :semiweekly_income do
-    @title = "Semiweekly Income"
-    @graph_options = Transaction::Graph.semiweekly_income.merge(
+  get :bimonthly_income do
+    @title = "Bimonthly Income"
+    @graph_options = Transaction::Graph.bimonthly_income.merge(
       :title => @title
     )
     @graph = "income"

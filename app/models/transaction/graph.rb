@@ -153,7 +153,7 @@ class Transaction
         {:data => data, :xlabels => xlabels}
       end
       
-      def semiweekly_income
+      def bimonthly_income
         all_txns = get_transactions
         
         return {:data => [], :xlabels => []} if all_txns.empty?
