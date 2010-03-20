@@ -86,18 +86,46 @@ describe Transaction::Graph do
   end
   
   describe '.monthly_income' do
-    it "sums up the income for each month in the dataset" do
-      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 1), :amount => 1000)
-      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 10), :amount => 300)
-      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 2, 1), :amount => -500)
-      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 2, 20), :amount => 2500)
-      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 3, 1), :amount => 1500)
-      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 3, 2), :amount => -1500)
-      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 4, 11), :amount => -200)
-      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 6, 1), :amount => 1000)
+    it "groups all transactions by month and tallies the income per month" do
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 5), :amount => 1000) # 1000
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 10), :amount => 300) # 1300
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 2, 1), :amount => -500) #  800
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 2, 20), :amount => 2500) # 3300
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 3, 1), :amount => 1500)  # 4800
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 3, 2), :amount => -1500) # 3300
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 4, 11), :amount => -200) # 3100
       Transaction::Graph.monthly_income.should == {
-        :data => [13.00, 20.00, 0, -2.00, 0, 10.00],
-        :xlabels => ["Jan 2010", "Feb 2010", "Mar 2010", "Apr 2010", "May 2010", "Jun 2010"]
+        :data => [-2.00, 40.00, -15.00, -2.00],
+        :xlabels => ["1/1/10 - 2/1/10", "2/1/10 - 3/1/10", "3/1/10 - 4/1/10", "4/1/10 - 5/1/10"]
+      }
+    end
+    it "fills in the gaps in time" do
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 5), :amount => 1000) # 1000
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 10), :amount => 300) # 1300
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 3, 1), :amount => 1500)  # 2800
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 3, 2), :amount => -1500) # 1300
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 5, 11), :amount => -200) # 1100
+      Transaction::Graph.monthly_income.should == {
+        :data => [3.00, 15.00, -15.00, 0, -2.00],
+        :xlabels => ["1/1/10 - 2/1/10", "2/1/10 - 3/1/10", "3/1/10 - 4/1/10", "4/1/10 - 5/1/10", "5/1/10 - 6/1/10"]
+      }
+    end
+    it "correctly handles datasets that start on the 1st of the month" do
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 1), :amount => 1000)  # 1000
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 10), :amount => 300)  # 1300
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 2, 10), :amount => -500) #  800
+      Transaction::Graph.monthly_income.should == {
+        :data => [3.00, -5.00],
+        :xlabels => ["1/1/10 - 2/1/10", "2/1/10 - 3/1/10"]
+      }
+    end
+    it "correctly handles datasets that end on the 1st of the month" do
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 5), :amount => 1000) # 1000
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 10), :amount => 300) # 1300
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 2, 1), :amount => -500) #  800
+      Transaction::Graph.monthly_income.should == {
+        :data => [-2.00, 0],
+        :xlabels => ["1/1/10 - 2/1/10", "2/1/10 - 3/1/10"]
       }
     end
     it "returns an empty result set if there aren't any transactions" do
@@ -108,22 +136,56 @@ describe Transaction::Graph do
     end
   end
   
-  describe '.semiweekly_income' do
-    it "sums up the income for every 2 weeks in the dataset" do
+  describe '.bimonthly_income' do
+    it "groups all transactions by 2-week periods and tallies the income per period" do
       Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2009, 12, 28), :amount => 1000) # 1000
       Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 7), :amount => 300)    # 1300
       Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 10), :amount => 500)   # 1800
       Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 20), :amount => -900)  #  900
       Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 2, 1), :amount => 500)    # 1400
       Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 2, 5), :amount => 2500)    # 3900
-      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 3, 1), :amount => -200)    # 3700
-      Transaction::Graph.semiweekly_income.should == {
-        :data => [13.00, -4.00, 30.00, 0.0, -2.00],
-        :xlabels => ["12/27/09 - 1/9/10", "1/10/10 - 1/23/10", "1/24/10 - 2/6/10", "2/7/10 - 2/20/10", "2/21/10 - 3/6/10"]
+      Transaction::Graph.bimonthly_income.should == {
+        :data => [8.00, -9.00, 30.00],
+        :xlabels => ["12/27/09 - 1/10/10", "1/10/10 - 1/24/10", "1/24/10 - 2/7/10"]
+      }
+    end
+    it "fills in the gaps in time" do
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2009, 12, 28), :amount => 1000) # 1000
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 7), :amount => 300)    # 1300
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 10), :amount => 500)   # 1800
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 20), :amount => -900)  #  900
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 2, 8), :amount => 500)    # 1400
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 2, 16), :amount => 2500)    # 3900
+      Transaction::Graph.bimonthly_income.should == {
+        :data => [8.00, -9.00, 0, 30.00],
+        :xlabels => ["12/27/09 - 1/10/10", "1/10/10 - 1/24/10", "1/24/10 - 2/7/10", "2/7/10 - 2/21/10"]
+      }
+    end
+    it "correctly handles datasets that start at the beginning of a period" do
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2009, 12, 27), :amount => 1000) # 1000
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 7), :amount => 300)    # 1300
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 10), :amount => 500)   # 1800
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 20), :amount => -900)  #  900
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 2, 8), :amount => 500)    # 1400
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 2, 16), :amount => 2500)    # 3900
+      Transaction::Graph.bimonthly_income.should == {
+        :data => [8.00, -9.00, 0, 30.00],
+        :xlabels => ["12/27/09 - 1/10/10", "1/10/10 - 1/24/10", "1/24/10 - 2/7/10", "2/7/10 - 2/21/10"]
+      }
+    end
+    it "correctly handles datasets that end on the beginning of a period" do
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2009, 12, 28), :amount => 1000) # 1000
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 7), :amount => 300)    # 1300
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 10), :amount => 500)   # 1800
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 20), :amount => -900)  #  900
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 2, 7), :amount => 500)    # 1400
+      Transaction::Graph.bimonthly_income.should == {
+        :data => [8.00, -9.00, 5.00, 0.00],
+        :xlabels => ["12/27/09 - 1/10/10", "1/10/10 - 1/24/10", "1/24/10 - 2/7/10", "2/7/10 - 2/21/10"]
       }
     end
     it "returns an empty result set if there aren't any transactions" do
-      Transaction::Graph.semiweekly_income.should == {
+      Transaction::Graph.bimonthly_income.should == {
         :data => [],
         :xlabels => []
       }
