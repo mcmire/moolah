@@ -80,17 +80,32 @@ class Transaction
       
       def balance
         all_txns = get_transactions
-        assemble_balance_data(all_txns)
+        return {:data => []} if all_txns.empty?
+        dates = all_txns.map(&:settled_on)
+        inner_window = dates.min .. dates.max
+        outer_window = inner_window.begin.at_beginning_of_month .. inner_window.end.at_end_of_month
+        data = assemble_balance_data(all_txns, inner_window, outer_window)
+        {:data => data}
       end
       
       def checking_balance
         all_txns = get_transactions(:account_id => "checking")
-        assemble_balance_data(all_txns)
+        return {:data => []} if all_txns.empty?
+        dates = all_txns.map(&:settled_on)
+        inner_window = dates.min .. dates.max
+        outer_window = inner_window.begin.at_beginning_of_month .. inner_window.end.at_end_of_month
+        data = assemble_balance_data(all_txns, inner_window, outer_window)
+        {:data => data}
       end
       
       def savings_balance
         all_txns = get_transactions(:account_id => "savings")
-        assemble_balance_data(all_txns)
+        return {:data => []} if all_txns.empty?
+        dates = all_txns.map(&:settled_on)
+        inner_window = dates.min .. dates.max
+        outer_window = inner_window.begin.at_beginning_of_month .. inner_window.end.at_end_of_month
+        data = assemble_balance_data(all_txns, inner_window, outer_window)
+        {:data => data}
       end
       
       def monthly_income
@@ -98,9 +113,9 @@ class Transaction
         
         return {:data => [], :xlabels => []} if all_txns.empty?
         
-        #dates = all_txns.map(&:settled_on)
-        #inner_window = dates.min .. dates.max
-        #outer_window = inner_window.begin.at_beginning_of_month .. inner_window.end.at_end_of_month
+        dates = all_txns.map(&:settled_on)
+        inner_window = dates.min .. dates.max
+        outer_window = inner_window.begin.at_beginning_of_month .. inner_window.end.at_end_of_month
         txns = squash_days_and_convert_to_dollars(all_txns)
         
         # Convert money earned/spent to balance
@@ -117,39 +132,75 @@ class Transaction
       
         # Now that we have month groups, we can figure out how much
         # was gained/lost per month
+        # Fill in the gaps in time
         data = []
         xlabels = []
         last_months_balance = 0
-        grouped_balance_data.keys.sort.each do |month|
+        month = outer_window.begin
+        while month < outer_window.end
           balances = grouped_balance_data[month]
-          diff = balances.last - last_months_balance
-          data << diff
+          if balances
+            diff = balances.last - last_months_balance
+            data << diff
+            last_months_balance = balances.last
+          else
+            data << 0
+          end
           xlabels << month.strftime("%b %Y")
-          last_months_balance = balances.last
+          month = month >> 1
         end
         
-        #start_of_month = balance_data[:inner_window].begin
-        #begin
-        #  # Find the data point at the first of the month
-        #  balance1 = balance_data[:data][start_of_month]
-        #  # Skip to the end of the month, or the end of the data
-        #  end_of_month = (start_of_month >> 1) - 1
-        #  balance2 = balance_data[:data][end_of_month]
-        #  unless balance2
-        #    end_of_month = balance_data[:inner_window].end
-        #    balance2 = balance_data[:data][end_of_month]
-        #  end
-        #  # How much did we make this month?
-        #  diff = balance2 - balance1
-        #  data << diff
-        #  xlabels << start_of_month.strftime("%b %Y")
-        #  start_of_month = end_of_month + 1
-        #end until start_of_month >= balance_data[:inner_window].end
+        {:data => data, :xlabels => xlabels}
+      end
+      
+      def semiweekly_income
+        all_txns = get_transactions
+        
+        return {:data => [], :xlabels => []} if all_txns.empty?
+        
+        dates = all_txns.map(&:settled_on)
+        inner_window = dates.min .. dates.max
+        outer_window = inner_window.begin.at_beginning_of_week .. inner_window.end.at_end_of_week
+        
+        txns = assemble_balance_data(all_txns, inner_window, outer_window)
+        
+        data, xlabels = [], []
+        
+        i = 0
+        balance_at_last_period_end, balance_at_period_end = 0, 0
+        period_start, period_end = outer_window.begin, nil
+        txns.each_with_index do |(date, balance), i|
+          if (date - period_start) >= 14 || i == txns.size-1
+            if i == txns.size-1
+              period_end = outer_window.end
+              balance_at_period_end = balance
+            end
+            # Okay, we've crossed a 2-week boundary (or hit the end of the dataset).
+            # Figure out how much we gained/lost since the end of the last period
+            # (NOT the start of this period or else we will be skipping a data point)
+            # and add the difference to the graph data.
+            # Since we've already crossed the boundary we have to pretend like we
+            # haven't yet (balance_at_period_end is the balance as of the last iteration).
+            diff = balance_at_period_end - balance_at_last_period_end
+            data << diff
+            xlabels << format_date(period_start) + " - " + format_date(period_end)
+            # Since this is actually the start of another boundary, record it
+            # so we can refer to it if we hit another boundary.
+            period_start = date
+            balance_at_last_period_end = balance_at_period_end
+          end
+          period_end = date
+          balance_at_period_end = balance
+        end
         
         {:data => data, :xlabels => xlabels}
       end
       
     private
+    
+      def format_date(date)
+        "#{date.month}/#{date.day}/#{date.year.to_s[2..3]}"
+      end
     
       def get_transactions(options={})
         Transaction.all({:order => "settled_on"}.merge(options))
@@ -160,46 +211,45 @@ class Transaction
         all_txns.inject({}) {|h,t| h[t.settled_on] ||= 0; h[t.settled_on] += (t.amount / 100.0); h }
       end
       
-      def assemble_balance_data(all_txns)
-        return {:data => []} if all_txns.empty?
+      def convert_amount_to_balance(txns)
+        balance_data = []
+        balance = 0
+        txns.keys.sort.each do |date|
+          amount = txns[date]
+          balance += amount
+          balance_data << [date, balance]
+        end
+        balance_data
+      end
+      
+      def convert_to_balance_txns(txns)
+        convert_amount_to_balance(squash_days_and_convert_to_dollars(txns))
+      end
+      
+      def assemble_balance_data(all_txns, inner_window, outer_window)
+        return [] if all_txns.empty?
         
-        dates = all_txns.map(&:settled_on)
-        inner_window = dates.min .. dates.max
-        outer_window = inner_window.begin.at_beginning_of_month .. inner_window.end.at_end_of_month
         txns = squash_days_and_convert_to_dollars(all_txns)
         
-        # Fill in the gaps in time
+        # Fill in the gaps in time.
+        # Every day is guaranteed to have *some* data point.
         data = []
         i = 0
         sum = 0
-        #txns.keys.sort.each_with_index do |date, i|
-        #  amount = txns[date]
-        #  if i > 0
-        #    data << Point.new((date-1).to_time.to_i * 1000, sum)
-        #  end
-        #  sum += amount
-        #  data << Point.new(date.to_time.to_i * 1000, sum)
-        #end
-        outer_window.each do |date|
+        inner_window.each do |date|
           amount = txns[date]
           if amount
-            # something happened today, let's show it and update running total.
+            # Something happened today. Let's show it and update running total.
             sum += amount
             balance = sum
-          elsif date < inner_window.begin
-            # we haven't started counting yet, skip ahead until we hit a point.
-            next
-          elsif date > inner_window.end
-            # no more transactions, let's end this.
-            break
           else
-            # no transactions today. keep same balance.
+            # No transactions today. Keep same balance.
             balance = sum
           end
           data << [date, balance]
         end
         
-        {:data => data}#, :inner_window => inner_window, :outer_window => outer_window}
+        data
       end
       
     end

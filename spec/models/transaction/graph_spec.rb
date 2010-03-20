@@ -90,17 +90,40 @@ describe Transaction::Graph do
       Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 1), :amount => 1000)
       Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 10), :amount => 300)
       Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 2, 1), :amount => -500)
-      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 2, 20), :amount => 2500)
-      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 3, 1), :amount => 1500)
-      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 3, 2), :amount => -1500)
-      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 4, 11), :amount => -200)
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 2, 20), :amount => 2500)
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 3, 1), :amount => 1500)
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 3, 2), :amount => -1500)
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 4, 11), :amount => -200)
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 6, 1), :amount => 1000)
       Transaction::Graph.monthly_income.should == {
-        :data => [13.00, 20.00, 0, -2.00],
-        :xlabels => ["Jan 2010", "Feb 2010", "Mar 2010", "Apr 2010"]
+        :data => [13.00, 20.00, 0, -2.00, 0, 10.00],
+        :xlabels => ["Jan 2010", "Feb 2010", "Mar 2010", "Apr 2010", "May 2010", "Jun 2010"]
       }
     end
     it "returns an empty result set if there aren't any transactions" do
       Transaction::Graph.monthly_income.should == {
+        :data => [],
+        :xlabels => []
+      }
+    end
+  end
+  
+  describe '.semiweekly_income' do
+    it "sums up the income for every 2 weeks in the dataset" do
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2009, 12, 28), :amount => 1000) # 1000
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 7), :amount => 300)    # 1300
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 10), :amount => 500)   # 1800
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 1, 20), :amount => -900)  #  900
+      Factory(:transaction, :account_id => "checking", :settled_on => Date.new(2010, 2, 1), :amount => 500)    # 1400
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 2, 5), :amount => 2500)    # 3900
+      Factory(:transaction, :account_id => "savings", :settled_on => Date.new(2010, 3, 1), :amount => -200)    # 3700
+      Transaction::Graph.semiweekly_income.should == {
+        :data => [13.00, -4.00, 30.00, 0.0, -2.00],
+        :xlabels => ["12/27/09 - 1/9/10", "1/10/10 - 1/23/10", "1/24/10 - 2/6/10", "2/7/10 - 2/20/10", "2/21/10 - 3/6/10"]
+      }
+    end
+    it "returns an empty result set if there aren't any transactions" do
+      Transaction::Graph.semiweekly_income.should == {
         :data => [],
         :xlabels => []
       }

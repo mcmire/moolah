@@ -40,6 +40,15 @@ Moolah.controller :graphs do
     render "graphs/show"
   end
   
+  get :semiweekly_income do
+    @title = "Semiweekly Income"
+    @graph_options = Transaction::Graph.semiweekly_income.merge(
+      :title => @title
+    )
+    @graph = "income"
+    render "graphs/show"
+  end
+  
   #get :show, :map => "/graphs/:graph" do
   #  @graph = params[:graph]
   #  @data = Transaction::Graph.send(:"get_#{@graph}_data")

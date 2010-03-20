@@ -26,4 +26,12 @@ class Date
   def self.fast_parse(str)
     Time.fast_parse(str).to_date
   end
+  
+  def at_beginning_of_week
+    self - wday
+  end
+  
+  def at_end_of_week
+    at_beginning_of_week + 6
+  end
 end

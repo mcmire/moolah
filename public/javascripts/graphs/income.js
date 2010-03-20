@@ -6,10 +6,10 @@ function drawGraph(options) {
       xaxis: {
         ticks: options.xlabels,
         renderer: $.jqplot.CategoryAxisRenderer,
-        rendererOptions: { tickRenderer: $.jqplot.CanvasAxisTickRenderer }/*,
+        rendererOptions: { tickRenderer: $.jqplot.CanvasAxisTickRenderer },
         tickOptions: {
           angle: -30
-        }*/
+        }
       },
       yaxis: {
         tickInterval: 500,
@@ -26,7 +26,8 @@ function drawGraph(options) {
       lineWidth: 2,
       showMarker: false,
       renderer: $.jqplot.BarRenderer,
-      rendererOptions: {barPadding: 8, barMargin: 20}
+      rendererOptions: {barPadding: 8, barMargin: 20},
+      fillToZero: true
     }],
     cursor: {
       show: false,
