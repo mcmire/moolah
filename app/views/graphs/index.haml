@@ -3,10 +3,7 @@
 %ul
   %li
     Balance
-    = '(' + %w(all checking savings).map {|x| link_to(x, (x == "all" ? "/graphs/balance" : "/graphs/#{x}_balance")) }.join(", ") + ')'
-  %li
-    Income
-    = '(' + %w(monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_income") }.join(", ") + ')'
+    = '(' + %w(daily monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_balance") }.join(", ") + ')'
   %li 
     Expenses
     = '(' + %w(monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_expenses") }.join(", ") + ')'

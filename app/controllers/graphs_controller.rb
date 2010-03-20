@@ -4,48 +4,30 @@ Moolah.controller :graphs do
     render 'graphs/index'
   end
   
-  get :balance do
-    @title = "Balance"
-    @graph_options = Transaction::Graph.balance.merge(
+  get :daily_balance do
+    @title = "Daily Balance"
+    @graph_options = Transaction::Graph.daily_balance.merge(
       :title => @title
     )
     @graph = "balance"
     render "graphs/show"
   end
   
-  get :checking_balance do
-    @title = "Checking Balance"
-    @graph_options = Transaction::Graph.checking_balance.merge(
+  get :monthly_balance do
+    @title = "Monthly Balance"
+    @graph_options = Transaction::Graph.monthly_balance.merge(
       :title => @title
     )
-    @graph = "balance"
+    @graph = "balance_by_period"
     render "graphs/show"
   end
   
-  get :savings_balance do
-    @title = "Savings Balance"
-    @graph_options = Transaction::Graph.savings_balance.merge(
+  get :bimonthly_balance do
+    @title = "Bimonthly Balance"
+    @graph_options = Transaction::Graph.bimonthly_balance.merge(
       :title => @title
     )
-    @graph = "balance"
-    render "graphs/show"
-  end
-  
-  get :monthly_income do
-    @title = "Monthly Income"
-    @graph_options = Transaction::Graph.monthly_income.merge(
-      :title => @title
-    )
-    @graph = "income"
-    render "graphs/show"
-  end
-  
-  get :bimonthly_income do
-    @title = "Bimonthly Income"
-    @graph_options = Transaction::Graph.bimonthly_income.merge(
-      :title => @title
-    )
-    @graph = "income"
+    @graph = "balance_by_period"
     render "graphs/show"
   end
   

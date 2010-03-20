@@ -78,7 +78,7 @@ class Transaction
     
     class << self
       
-      def balance
+      def daily_balance
         all_txns = get_transactions
         return {:data => []} if all_txns.empty?
         dates = all_txns.map(&:settled_on)
@@ -88,27 +88,7 @@ class Transaction
         {:data => data}
       end
       
-      def checking_balance
-        all_txns = get_transactions(:account_id => "checking")
-        return {:data => []} if all_txns.empty?
-        dates = all_txns.map(&:settled_on)
-        inner_window = dates.min .. dates.max
-        outer_window = inner_window.begin.at_beginning_of_month .. inner_window.end.at_end_of_month
-        data = build_balance_data(all_txns, inner_window, outer_window)
-        {:data => data}
-      end
-      
-      def savings_balance
-        all_txns = get_transactions(:account_id => "savings")
-        return {:data => []} if all_txns.empty?
-        dates = all_txns.map(&:settled_on)
-        inner_window = dates.min .. dates.max
-        outer_window = inner_window.begin.at_beginning_of_month .. inner_window.end.at_end_of_month
-        data = build_balance_data(all_txns, inner_window, outer_window)
-        {:data => data}
-      end
-      
-      def monthly_income
+      def monthly_balance
         all_txns = get_transactions
         
         return {:data => [], :xlabels => []} if all_txns.empty?
@@ -117,13 +97,13 @@ class Transaction
         inner_window = dates.min .. dates.max
         outer_window = inner_window.begin.at_beginning_of_month .. inner_window.end.at_end_of_month
         
-        build_income_data(
+        build_balance_by_period_data(
           all_txns, inner_window, outer_window,
           :get_next_period => lambda {|date| date >> 1 }
         )
       end
       
-      def bimonthly_income
+      def bimonthly_balance
         all_txns = get_transactions
         
         return {:data => [], :xlabels => []} if all_txns.empty?
@@ -132,10 +112,13 @@ class Transaction
         inner_window = dates.min .. dates.max
         outer_window = inner_window.begin.at_beginning_of_week .. inner_window.end.at_end_of_week
         
-        build_income_data(
+        build_balance_by_period_data(
           all_txns, inner_window, outer_window,
           :get_next_period => lambda {|date| date + 14 }
         )
+      end
+      
+      def monthly_expenses
       end
       
     private
@@ -148,25 +131,12 @@ class Transaction
         Transaction.all({:order => "settled_on"}.merge(options))
       end
       
-      # Squash days
+      # If multiple transactions occur on the same day, squash them into one data point.
+      # Also, since we store the transaction amounts as cents in the database, convert them
+      # to dollars.
       def squash_days_and_convert_to_dollars(all_txns)
         all_txns.inject({}) {|h,t| h[t.settled_on] ||= 0; h[t.settled_on] += (t.amount / 100.0); h }
       end
-      
-      #def convert_amount_to_balance(txns)
-      #  balance_data = []
-      #  balance = 0
-      #  txns.keys.sort.each do |date|
-      #    amount = txns[date]
-      #    balance += amount
-      #    balance_data << [date, balance]
-      #  end
-      #  balance_data
-      #end
-      #
-      #def convert_to_balance_txns(txns)
-      #  convert_amount_to_balance(squash_days_and_convert_to_dollars(txns))
-      #end
       
       def build_balance_data(all_txns, inner_window, outer_window)
         return [] if all_txns.empty?
@@ -194,7 +164,7 @@ class Transaction
         data
       end
       
-      def build_income_data(all_txns, inner_window, outer_window, opts)
+      def build_balance_by_period_data(all_txns, inner_window, outer_window, opts)
         opts[:xlabel] ||= lambda {|period_start, period_end| format_date(period_start) + " - " + format_date(period_end) }
         
         txns = build_balance_data(all_txns, inner_window, outer_window)
