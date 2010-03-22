@@ -8,8 +8,5 @@
     Expenses
     = '(' + %w(monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_expenses") }.join(", ") + ')'
   %li
-    Net worth
-    = '(' + %w(monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_net_worth") }.join(", ") + ')'
-  %li
     Income rate
-    = '(' + %w(monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_income_rate") }.join(", ") + ')'
+    = '(' + %w(daily monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_income_rate") }.join(", ") + ')'

@@ -83,8 +83,7 @@ class Transaction
         return {:data => []} if all_txns.empty?
         dates = all_txns.map(&:settled_on)
         inner_window = dates.min .. dates.max
-        outer_window = inner_window.begin.at_beginning_of_month .. inner_window.end.at_end_of_month
-        data = build_balance_data(all_txns, inner_window, outer_window)
+        data = build_balance_data(all_txns, inner_window)
         {:data => data}
       end
       
@@ -118,7 +117,26 @@ class Transaction
         )
       end
       
-      def monthly_expenses
+      def daily_income_rate
+        all_txns = get_transactions
+        
+        return {:data => []} if all_txns.empty?
+        
+        dates = all_txns.map(&:settled_on)
+        inner_window = dates.min .. dates.max
+        outer_window = inner_window.begin.at_beginning_of_month .. inner_window.end.at_end_of_month
+        
+        txns = build_balance_data(all_txns, inner_window)
+        
+        data = []
+        sum = 0
+        txns.each_with_index do |(date, balance), i|
+          sum += balance
+          avg = (i == 0) ? 0 : sum / i
+          data << [date, avg]
+        end
+        
+        {:data => data}
       end
       
     private
@@ -138,7 +156,7 @@ class Transaction
         all_txns.inject({}) {|h,t| h[t.settled_on] ||= 0; h[t.settled_on] += (t.amount / 100.0); h }
       end
       
-      def build_balance_data(all_txns, inner_window, outer_window)
+      def build_balance_data(all_txns, inner_window)
         return [] if all_txns.empty?
         
         txns = squash_days_and_convert_to_dollars(all_txns)
@@ -167,7 +185,7 @@ class Transaction
       def build_balance_by_period_data(all_txns, inner_window, outer_window, opts)
         opts[:xlabel] ||= lambda {|period_start, period_end| format_date(period_start) + " - " + format_date(period_end) }
         
-        txns = build_balance_data(all_txns, inner_window, outer_window)
+        txns = build_balance_data(all_txns, inner_window)
         #pp :txns => txns
         
         data, xlabels = [], []

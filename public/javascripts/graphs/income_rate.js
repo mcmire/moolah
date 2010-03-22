@@ -1,25 +1,28 @@
 function drawGraph(options) {
-  //if (!options.data || !options.data.length == 0) return;
+  if (!options.data || options.data.length == 0) return;
+  var firstDate = new Date(options.data[0][0]);
+  var minDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), 1);
   $('#graph').html("");
   $.jqplot('graph', [options.data], {
     axes: {
       xaxis: {
-        ticks: options.xlabels,
-        renderer: $.jqplot.CategoryAxisRenderer,
+        renderer: $.jqplot.DateAxisRenderer,
         rendererOptions: {
           tickRenderer: $.jqplot.CanvasAxisTickRenderer
         },
         tickOptions: {
+          formatString: "%m/%d/%y",
           angle: -30,
           fontSize: '8pt',
           fontFamily: "Helvetica Neue, Arial",
           enableFontSupport: true,
-          textColor: "#333"
+          textColor: "#333",
+          // not working??
+          tickInterval: "1 month",
+          min: minDate
         }
       },
       yaxis: {
-        tickInterval: 500,
-        //min: 0,
         autoscale: true,
         rendererOptions: {
           tickRenderer: $.jqplot.CanvasAxisTickRenderer
@@ -30,31 +33,25 @@ function drawGraph(options) {
           fontFamily: "Helvetica Neue, Arial",
           enableFontSupport: true,
           textColor: "#333"
-        }
+        },
+        tickInterval: 250,
+        min: 0
       }
     },
     series: [{
       label: options.title,
       lineWidth: 3,
       showMarker: false,
-      renderer: $.jqplot.BarRenderer,
-      rendererOptions: {barPadding: 8, barMargin: 20},
-      fillToZero: true,
       shadow: false,
       /* BUG? The offset, alpha, and depth are not being honored for bar charts */
       shadowAngle: 30, 
       shadowOffset: 5,
       shadowDepth: 1,
-      shadowAlpha: 0.15
+      shadowAlpha: 0.08
     }],
     grid: {
       shadow: false
     },
-    /*
-    cursor: {
-      show: false,
-      showCursorLegend: true
-    },*/
     cursor: {  
       showVerticalLine: true,
       showHorizontalLine: false,

@@ -40,14 +40,18 @@ function drawGraph(options) {
     },
     series: [{
       label: options.title,
-      lineWidth: 2,
+      lineWidth: 3,
       showMarker: false,
+      shadow: false,
       /* BUG? The offset, alpha, and depth are not being honored for bar charts */
       shadowAngle: 30, 
       shadowOffset: 5,
       shadowDepth: 1,
       shadowAlpha: 0.15
     }],
+    grid: {
+      shadow: false
+    },
     cursor: {  
       showVerticalLine: true,
       showHorizontalLine: false,

@@ -144,4 +144,6 @@ describe Transaction::Graph do
     end
   end
   
+  describe ".monthly_income_rate"
+  
 end
