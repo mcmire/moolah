@@ -25,6 +25,7 @@ $(function() {
       var action = this.href.replace(/\/delete/, "/");
       
       var f = document.createElement("form");
+      f.id = "delete-form";
       f.style.display = "none";
       f.method = "post";
       f.action = action;
@@ -35,7 +36,7 @@ $(function() {
       m.value = "delete";
       
       f.appendChild(m);
-      this.parentNode.appendChild(f);
+      document.body.appendChild(f);
       f.submit();
     }
     event.preventDefault();
