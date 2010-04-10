@@ -56,4 +56,4 @@ Finally, open your browser and go to `http://localhost:3000`.
 
 ## author/contact
 
-If you've got any suggestions, feel free to send 'em my way! Just send me a Github note or email <elliot dot winkler at gmail dot com>.
+If you've got any suggestions, feel free to send 'em my way! Just send me a Github note or email me (elliot dot winkler at gmail dot com).
