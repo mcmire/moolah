@@ -16,7 +16,7 @@ RequireProfiling.profile do
   rescue LoadError
     # Fallback on doing the resolve at runtime.
     require 'rubygems'
-    gem 'bundler', '0.9.7'
+    gem 'bundler', '>= 0.9.7'
     require 'bundler'
     Bundler.setup(:default, PADRINO_ENV.to_sym)
   end

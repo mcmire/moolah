@@ -10,3 +10,4 @@ Rakefile.old
 spec.old
 *.tmproj
 config/settings.yml
+.bundle
