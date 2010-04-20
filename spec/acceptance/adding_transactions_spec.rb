@@ -9,6 +9,7 @@ feature "Adding transactions" do
   
   scenario "Adding a transaction" do
     visit "/transactions/new"
+    select "Checking", :from => "Account"
     select "Debit", :from => "transaction_kind"
     fill_in "transaction_description", :with => "The best transaction"
     fill_in "transaction_amount", :with => "123.45"
@@ -17,8 +18,8 @@ feature "Adding transactions" do
     current_path.should == "/transactions"
     body.should =~ /Transaction successfully added/
     tableish('#transactions tr', 'th,td').should == [
-      ["", "Date", "Check #", "Description", "Amount", "", ""],
-      ["", "01/01/2010",  "", "The best transaction", "-$123.45", "Edit", "Delete"]
+      ["", "Account", "Date", "Check #", "Description", "Amount", "", ""],
+      ["", "Checking", "01/01/2010",  "", "The best transaction", "-$123.45", "Edit", "Delete"]
     ]
   end
 end

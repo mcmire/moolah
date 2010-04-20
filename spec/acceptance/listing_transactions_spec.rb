@@ -29,9 +29,9 @@ feature "Listing transactions" do
     )
     visit "/transactions"
     tableish('#transactions tr', 'th,td').should == [
-      ["", "Date", "Check #", "Description", "Amount", "", ""],
-      ["", "02/01/2009",  "", "Another transaction", "-$5.00", "Edit", "Delete"],
-      ["", "01/01/2009",  "", "Some transaction", "-$10.00", "Edit", "Delete"]
+      ["", "Account", "Date", "Check #", "Description", "Amount", "", ""],
+      ["", "Savings", "02/01/2009",  "", "Another transaction", "-$5.00", "Edit", "Delete"],
+      ["", "Checking", "01/01/2009",  "", "Some transaction", "-$10.00", "Edit", "Delete"]
     ]
   end
   

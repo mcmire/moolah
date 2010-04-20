@@ -5,14 +5,16 @@ X Tabs for checking and savings account
 X Ability to edit description, category, and other details of a transaction
 X Ability to add a transaction manually
 X Destroy multiple is broken?
-* Graphs (using graphael)
+* Graphs (using jqplot)
   - overall balance
   - monthly and biweekly income
   - monthly and biweekly expenses (by category)
   - monthly and biweekly net worth
   - monthly and biweekly income rate (with avg line)
 * Auto-categorization of transactions upon import (categorization rules, like Mint)
+* Make integration stuff into a gem and require that instead (and convert over to spec/integration)
+* Paginate the list
 * CSSify this biatch! (reset stylesheet, vertical rhythm, etc.)
-* Javascript add/edit
+* Javascript add/edit (click on a line to edit, click out to cancel)
 * Upon import, show a line in between current import and existing data (so we know what we've imported)
 * Sort by column in transactions list

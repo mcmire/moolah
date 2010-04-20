@@ -15,6 +15,8 @@
     %table#transactions
       %tr
         %th= check_box_tag "delete_all", :id => "delete_all"
+        - unless @account_id
+          %th Account
         %th Date
         %th Check #
         %th Description
@@ -24,6 +26,8 @@
       - for transaction in @transactions
         %tr{:id => "transaction_#{transaction.id}"}
           %td= check_box_tag "to_delete[]", :value => transaction.id, :id => "to_delete_#{transaction.id}", :class => "delete_box"
+          - unless @account_id
+            %td= transaction.account_id.capitalize
           %td= transaction.settled_on.strftime("%m/%d/%Y")
           %td= transaction.check_number
           %td= transaction.description
