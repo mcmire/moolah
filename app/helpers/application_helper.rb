@@ -23,7 +23,7 @@ Moolah.helpers do
         method = "put"
       end
     end
-    form_for(record, url || settings[:url], {:method => method}.merge(settings[:html] || {}), &block)
+    form_for(record, url || options[:url], {:method => method}.merge(options[:html] || {}), &block)
   end
   
 end

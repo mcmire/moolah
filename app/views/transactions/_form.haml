@@ -7,20 +7,32 @@
     = f.label :account_id
     = f.select :account_id, :options => [["Checking", "checking"], ["Savings", "savings"]]
   %div
-    %label Original description:
-    = transaction.original_description
-  %div
-    = f.label :check_number
-    = f.text_field :check_number, :size => 4
+    %label Category:
+    = f.select :category_id, :options => [["", ""]] + Category.all.map {|c| [c.name, c.id] }
+  - unless transaction.new_record?
+    %div
+      %label Original description:
+      = transaction.original_description
   %div
     = f.label :description
     = f.text_field :description, :size => 50
   %div
+    = f.label :check_number
+    = f.text_field :check_number, :size => 4
+  %div
     = f.label :amount
-    = f.text_field :amount, :size => 6, :value => (transaction.amount_as_decimal if transaction.amount)
+    = f.text_field :amount, :size => 6, :value => (transaction.amount && transaction.amount_as_decimal)
   %div
     = f.label :settled_on
     = f.text_field :settled_on, :size => 12
+  - if transaction.import_rule
+    %div
+      == Transactions named <b>#{transaction.original_description}</b> are imported as <b>#{transaction.import_rule.description}</b>.
+  - else
+    %div
+      = f.check_box :creating_import_rule
+      - caption = "Auto-assign these settings to #{transaction.original_description ? "<b>#{transaction.original_description}</b>" : "these kind of"} transactions from now on"
+      = f.label :creating_import_rule, :caption => caption
   %div
     = f.submit button_text
     or

@@ -16,38 +16,24 @@ class Moolah < Padrino::Application
     # enable  :authentication     # Enable padrino-admin authentication (disabled by default)
     # layout :foo                 # Layout can be in views/layouts/foo.ext or views/foo.ext (:application is default)
     # 
+    
+    # use Rack::LessCss, :less_path => "#{PADRINO_ROOT}/app/stylesheets", :css_route => "/stylesheets"
+    use Rack::TrailingSlash
+    enable :sessions
+    enable :flash
+    
+    layout "application"
   end
 
-  ##
-  # You can configure for a specified environment like:
-  # 
-  #   configure :development do
-  #     set :foo, :bar
-  #   end
-  #
-
-  ##
-  # You can manage errors like:
-  # 
-  #   errors 404 do
-  #     render 'errors/404'
-  #   end
-  #
-  
-  layout "application"
-  
   configure :test do
     # Sinatra < 1.0 always disable sessions for the test environment, so if you
     # need them it's necessary to force the use of Rack::Session::Cookie.
     # (You can handle all Padrino applications using `Padrino.application` instead.)
     use Rack::Session::Cookie
   end
-  
-  configure do
-    # use Rack::LessCss, :less_path => "#{PADRINO_ROOT}/app/stylesheets", :css_route => "/stylesheets"
-    use Rack::TrailingSlash
-  end
-  
-  require 'pp'
 
+  require 'pp'
+  
+  Padrino::Logger::Config[:test] = { :log_level => :debug, :stream => :to_file }
+  Padrino::Logger.setup!
 end

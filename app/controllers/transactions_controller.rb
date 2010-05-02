@@ -18,6 +18,7 @@ Moolah.controller :transactions do
     @transaction.attributes = params[:transaction]
     @transaction.amount *= 100.0
     @transaction.amount *= -1.00 if params[:transaction_kind] == "debit"
+    logger.debug "Creating import rule? #{@transaction.creating_import_rule?.inspect}"
     if @transaction.save
       flash[:success] = "Transaction successfully added."
       redirect url(:transactions, :index, :account_id => session[:last_account_id])

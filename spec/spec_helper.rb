@@ -4,7 +4,7 @@
 
 require 'rubygems'
 #require 'spork'
-$:.unshift "/Users/elliot/code/vendor/cli/spork/lib"
+$:.unshift "/Users/elliot/code/github/forks/spork/lib"
 require 'spork'
 
 #class MissingSourceFile < LoadError; end
@@ -12,6 +12,9 @@ require 'spork'
 #$app ||= Moolah.new
 
 Spork.prefork do
+  # UGH... fag
+  Object.const_set(:I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2, true)
+  
   Object.const_set(:PADRINO_ENV, 'test') unless defined?(PADRINO_ENV)
   require File.expand_path(File.dirname(__FILE__) + "/../config/boot")
   require 'spec/autorun'

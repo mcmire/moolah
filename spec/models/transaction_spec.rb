@@ -12,7 +12,7 @@ describe Transaction do
   end
   
   it "gets a SHA1 hash on creation based on the account, date, check number, original description, and amount" do
-    transaction = Transaction.create!(
+    transaction = Factory(:transaction,
       :account_id => "checking",
       :settled_on => Date.new(2009, 1, 1),
       :check_number => 1001,
@@ -20,6 +20,31 @@ describe Transaction do
       :amount => -2092
     )
     transaction.sha1.should == "c40d4a8a92d643df6d4d8e4851f948b9a0254ea4"
+  end
+  
+  it "sets description to original_description if description is blank" do
+    transaction = Factory(:transaction, :original_description => "blah", :description => nil)
+    transaction.description.should == "blah"
+    transaction = Factory(:transaction, :original_description => "blah", :description => "")
+    transaction.description.should == "blah"
+  end
+  
+  context "after save" do  
+    it "calls create_import_rule if create_import_rule checkbox was checked" do
+      transaction = Factory.build(:transaction)
+      transaction.stubs(:create_import_rule!)
+      transaction.creating_import_rule = true
+      transaction.save
+      transaction.should have_received(:create_import_rule!)
+    end
+    
+    it "doesn't call create_import_rule if create_import_rule checkbox was not checked" do
+      transaction = Factory.build(:transaction)
+      transaction.stubs(:create_import_rule!)
+      transaction.creating_import_rule = false
+      transaction.save
+      transaction.should have_received(:create_import_rule!).never
+    end
   end
   
   context '#type' do
@@ -59,13 +84,23 @@ describe Transaction do
     it "reads the transactions in the given file and imports them into the database" do
       num_transactions_saved = Transaction.import!(File.read("#{TEST_DIR}/fixtures/transactions.csv"), "checking")
       num_transactions_saved.should == 5
-      rows = Transaction.all.map {|t| [t.account_id, t.settled_on, t.check_number, t.original_description, t.description, t.amount] }
+      rows = Transaction.all.map {|t| [t.account_id, t.settled_on, t.check_number, t.original_description, t.amount] }
       rows.size.should == 5
-      rows[0].should == [ "checking", Date.new(2008, 1, 14), nil, "TARGET T0695 C  TARGET T0695", "TARGET T0695 C  TARGET T0695", -12488 ]
-      rows[1].should == [ "checking", Date.new(2008, 1, 7), nil, "MAPCO-EXPRESS #", "MAPCO-EXPRESS #", -4079 ]
-      rows[2].should == [ "checking", Date.new(2008, 1, 7), nil, "SONIC DRIVE IN  SONIC DRIVE I", "SONIC DRIVE IN  SONIC DRIVE I", -687 ]
-      rows[3].should == [ "checking", Date.new(2007, 12, 31), 1012, "CHECK #1012", "CHECK #1012", -25000 ]
-      rows[4].should == [ "checking", Date.new(2007, 12, 28), nil, "PAYROLL", "PAYROLL", 98339 ]
+      rows[0].should == [ "checking", Date.new(2008, 1, 14), nil, "TARGET T0695 C  TARGET T0695", -12488 ]
+      rows[1].should == [ "checking", Date.new(2008, 1, 7), nil, "MAPCO-EXPRESS #", -4079 ]
+      rows[2].should == [ "checking", Date.new(2008, 1, 7), nil, "SONIC DRIVE IN  SONIC DRIVE I", -687 ]
+      rows[3].should == [ "checking", Date.new(2007, 12, 31), 1012, "CHECK #1012", -25000 ]
+      rows[4].should == [ "checking", Date.new(2007, 12, 28), nil, "PAYROLL", 98339 ]
+    end
+    it "applies any matching import rules" do
+      category1 = Factory(:category, :name => "Stores")
+      ImportRule.create!(:pattern => /^TARGET/, :category_id => category1.id, :description => "Target")
+      category2 = Factory(:category, :name => "Food")
+      ImportRule.create!(:pattern => /SONIC/, :category_id => category2.id, :description => "Sonic")
+      Transaction.import!(File.read("#{TEST_DIR}/fixtures/transactions.csv"), "checking")
+      rows = Transaction.all.map {|t| [t.category_id, t.description] }
+      rows[0].should == [category1.id, "Target"]
+      rows[2].should == [category2.id, "Sonic"]
     end
     it "doesn't import transactions that have already been imported" do
       num_transactions_saved = Transaction.import!(File.read("#{TEST_DIR}/fixtures/transactions.csv"), "checking")
@@ -73,6 +108,61 @@ describe Transaction do
       num_transactions_saved.should == 0
       rows = Transaction.all.map {|t| [t.settled_on, t.check_number, t.original_description, t.description, t.amount] }
       rows.size.should == 5
+    end
+  end
+  
+  context '#create_import_rule!' do
+    it "creates an import rule from the description, category, and account" do
+      category_id = Mongo::ObjectID.new
+      transaction = Transaction.new(:account_id => "checking", :category_id => category_id, :original_description => "SOME TRANSACTION", :description => "Some transaction")
+      transaction.create_import_rule!
+      rule = ImportRule.first
+      rule.pattern.should == /^SOME\ TRANSACTION$/
+      rule.account_id.should == "checking"
+      rule.category_id.should == category_id
+      rule.description.should == "Some transaction"
+    end
+    it "escapes regex characters when creating the regex" do
+      transaction = Transaction.new(:original_description => "SOME $TRANSAC*ION")
+      transaction.create_import_rule!
+      rule = ImportRule.first
+      rule.pattern.should == /^SOME\ \$TRANSAC\*ION$/
+    end
+  end
+  
+  context '#apply_import_rules' do
+    it "sets the description per the import rule that applies" do
+      ImportRule.create!(:pattern => /^TARGET/, :description => "Target")
+      transaction = Transaction.new(:original_description => "TARGET T0695 C  TARGET T0695")
+      transaction.apply_import_rules
+      transaction.description.should == "Target"
+    end
+    it "sets the category per the import rule that applies" do
+      category = Factory(:category, :name => "Stores")
+      ImportRule.create!(:pattern => /^TARGET/, :category_id => category.id)
+      transaction = Transaction.new(:original_description => "TARGET T0695 C  TARGET T0695")
+      transaction.apply_import_rules
+      transaction.category_id.should == category.id
+    end
+    it "sets the account per the import rule that applies" do
+      ImportRule.create!(:pattern => /^TARGET/, :account_id => "checking")
+      transaction = Transaction.new(:original_description => "TARGET T0695 C  TARGET T0695")
+      transaction.apply_import_rules
+      transaction.account_id.should == "checking"
+    end
+    it "sets multiple attributes that the rule may have" do
+      category = Factory(:category, :name => "Stores")
+      ImportRule.create!(:pattern => /^TARGET/, :description => "Target", :category_id => category.id)
+      transaction = Transaction.new(:original_description => "TARGET T0695 C  TARGET T0695")
+      transaction.apply_import_rules
+      transaction.description.should == "Target"
+      transaction.category_id.should == category.id
+    end
+    it "treats the pattern as a regex and matches it against description" do
+      ImportRule.create!(:pattern => /T0695/, :description => "Target")
+      transaction = Transaction.new(:original_description => "TARGET T0695 C  TARGET T0695")
+      transaction.apply_import_rules
+      transaction.description.should == "Target"
     end
   end
 end

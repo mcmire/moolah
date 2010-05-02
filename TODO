@@ -11,10 +11,15 @@ X Destroy multiple is broken?
   - monthly and biweekly expenses (by category)
   - monthly and biweekly net worth
   - monthly and biweekly income rate (with avg line)
-* Auto-categorization of transactions upon import (categorization rules, like Mint)
+* Add categories w/ category management
+* Add transaction types w/ transaction type management
+* Auto-assignment of category, transaction type, and description upon import
+* Switch to Mongoid
+* Enforce Ruby 1.9?
+* Store amount in cents, silly!
 * Make integration stuff into a gem and require that instead (and convert over to spec/integration)
 * Paginate the list
-* CSSify this biatch! (reset stylesheet, vertical rhythm, etc.)
+* CSSify this biatch (reset stylesheet, vertical rhythm, etc.) and add nav links
 * Javascript add/edit (click on a line to edit, click out to cancel)
 * Upon import, show a line in between current import and existing data (so we know what we've imported)
 * Sort by column in transactions list

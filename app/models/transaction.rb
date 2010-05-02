@@ -3,23 +3,38 @@ require 'digest/sha1'
 class Transaction
   include MongoMapper::Document
   
-  key :sha1, String
+  key :sha1, String, :required => true
   #key :parent_id, Integer
-  key :account_id, String # checking, savings
+  key :account_id, String, :required => true # checking, savings
   key :transaction_type_id, Integer  # cc, atm, etc.
-  key :category_id, Integer # gas, rent, etc.
+  key :category_id, ObjectId # gas, rent, etc.
   key :check_number, Integer
-  key :amount, Float
+  key :amount, Float, :required => true
   key :original_description, String
-  key :description, String
-  key :settled_on, Date
+  key :description, String, :required => true
+  key :settled_on, Date, :required => true
   timestamps!
   
   belongs_to :account
+  belongs_to :transaction_type
+  belongs_to :category
   
-  before_create :store_sha1
+  before_validation_on_create :store_sha1
+  before_validation_on_create :set_description_from_original_description, :unless => :description?
+  after_save :create_import_rule!, :if => :creating_import_rule?
   
   validate :amount_must_not_be_zero
+  
+  def creating_import_rule?
+    @creating_import_rule
+  end
+  def creating_import_rule=(value)
+    @creating_import_rule = case value
+      when "1" then true
+      when "0" then false
+      else value
+    end
+  end
   
   def kind
     (amount > 0 ? "credit" : "debit")
@@ -57,6 +72,8 @@ class Transaction
       # MongoMapper: Something interesting is that this doesn't cast
       # the number to an int if the key is int (even though update_attributes/attributes= does)
       transaction.amount = number
+      transaction.apply_import_rules
+      # TODO: Make this automatic
       transaction.sha1 = transaction.calculate_sha1
       # Don't add the transaction if it's already been added
       unless Transaction.exists?(:sha1 => transaction.sha1)
@@ -69,11 +86,43 @@ class Transaction
     csv.close
   end
   
+  def import_rule
+    return if original_description.nil?
+    @import_rule ||= begin
+      desc = Regexp.escape(original_description)#.inspect
+      ImportRule.first("$where" => "this.pattern.test(\"#{desc}\")")
+    end
+  end
+  def import_rule?
+    !!import_rule
+  end
+  
+  def apply_import_rules  # well, one rule
+    if rule = import_rule
+      self.account_id = rule.account_id if rule.account_id
+      self.category_id = rule.category_id if rule.category_id
+      self.description = rule.description if rule.description
+    end
+  end
+  
+  def create_import_rule!
+    ImportRule.create!(
+      :pattern => Regexp.new('^' + Regexp.escape(original_description) + '$'),
+      :account_id => account_id,
+      :category_id => category_id,
+      :description => description
+    )
+  end
+  
   def store_sha1
     self.sha1 ||= calculate_sha1
   end
   def calculate_sha1
     Digest::SHA1.hexdigest("#{account_id}#{settled_on}#{check_number}#{original_description}#{amount}")
+  end
+  
+  def set_description_from_original_description
+    self.description = original_description
   end
   
   def amount_must_not_be_zero

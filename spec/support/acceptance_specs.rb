@@ -60,6 +60,21 @@ module Capybara
       end
     end
   end
+  
+  module SaveAndOpenPage
+    def self.open_in_browser(path)
+      if `ps aux | grep 'Google Chrome' | grep -v 'grep Google Chrome'`.blank?
+        begin
+          require "launchy"
+          Launchy::Browser.run(path)
+        rescue LoadError
+          warn "Sorry, you need to install launchy to open pages: `gem install launchy`"
+        end
+      else
+        `open -a '/Applications/Google Chrome.app' '#{path}'`
+      end
+    end
+  end
 end
 
 # Copied from cucumber-rails

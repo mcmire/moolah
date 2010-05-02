@@ -8,9 +8,11 @@ feature "Adding transactions" do
   EOT
   
   scenario "Adding a transaction" do
+    Factory(:category, :name => "Some Category")
     visit "/transactions/new"
     select "Checking", :from => "Account"
     select "Debit", :from => "transaction_kind"
+    select "Some Category", :from => "transaction_category_id"
     fill_in "transaction_description", :with => "The best transaction"
     fill_in "transaction_amount", :with => "123.45"
     fill_in "transaction_settled_on", :with => "2010-01-01"

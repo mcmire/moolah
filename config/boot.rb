@@ -6,8 +6,8 @@
 PADRINO_ENV  = ENV["PADRINO_ENV"] ||= ENV["RACK_ENV"] ||= "development" unless defined?(PADRINO_ENV)
 PADRINO_ROOT = File.expand_path(File.dirname(__FILE__) + '/..') unless defined? PADRINO_ROOT
 
-require File.expand_path(File.dirname(__FILE__) + '/../lib/require_profiling')
-RequireProfiling.profile do
+require File.expand_path(File.dirname(__FILE__) + '/../lib/require_profiler')
+RequireProfiler.profile do
   puts "Booting Padrino..."
   
   begin
@@ -16,7 +16,7 @@ RequireProfiling.profile do
   rescue LoadError
     # Fallback on doing the resolve at runtime.
     require 'rubygems'
-    gem 'bundler', '>= 0.9.7'
+    #gem 'bundler', '>= 0.9.7'
     require 'bundler'
     Bundler.setup(:default, PADRINO_ENV.to_sym)
   end

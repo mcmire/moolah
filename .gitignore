@@ -1,6 +1,7 @@
 .DS_Store
+log/*
 log/**/*
-tmp
+tmp/*
 tmp/**/*
 bin/*
 vendor/gems/*

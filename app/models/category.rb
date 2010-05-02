@@ -1,5 +1,4 @@
-class Account
+class Category
   include MongoMapper::Document
-  key :_id, String, :required => true
   key :name, String, :required => true
 end
