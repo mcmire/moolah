@@ -55,10 +55,10 @@ namespace :db do
   desc "Truncates tables in a database of your choice (default: development). By default this just truncates the seed tables, if you want all of them pass ALL=true."
   task :truncate, [:env] => :init do |t, args|
     env = args[:env] || "development"
-    truncate_all = !ENV["ALL"]
+    truncate_all = ENV["ALL"]
     MongoMapper.database = Moolah.settings(env)['database']
     collections = truncate_all ? MongoMapper.database.collections : seed_collections
-    collections.each {|coll| coll.remove }
-    puts "Truncated collections: #{collections.map {|coll| coll.name }.join(", ")}"
+    collections.each {|coll| coll.drop }
+    puts "Dropped collections: #{collections.map {|coll| coll.name }.join(", ")}"
   end
 end
