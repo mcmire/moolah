@@ -57,25 +57,15 @@ Finally, open your browser and go to `http://localhost:3000`.
 
 ## running tests
 
-There are three types of tests: model tests, non-Javascript acceptance tests, and Javascript acceptance tests.
+Yes, I actually tried to write tests for this ;)
 
-Model tests are run like this:
+When you ran `bundle install`, bundler should have installed the gems you need to run the tests, so you should be ready to run the tests.
 
-1. In one tab, run `spork`
-2. In another tab, run `rake spec:models`
+I'm using [Spork](http://github.com/timcharper/spork) to speed up tests. So the first thing you want to do is open up another shell in your terminal, say `spork`, and leave that process running. Then, in your main shell, you can either:
 
-The non-JS acceptance tests are run like this:
-
-1. In one tab, run `spork`
-2. In another tab, run `rake spec:acceptance`
-
-The JS acceptance tests are run like this:
-
-1. In one tab, run `spork`
-2. In another tab, run `padrino start -e test -p 5151`
-3. In a third tab, run `rake spec:acceptance JS=1`
-
-Done!
+* run the model tests: `rake spec:models`
+* run the non-JS acceptance tests: `rake spec:acceptance`
+* run the JS acceptance tests: `padrino start -e test -p 5151` (in a third shell), then `rake spec:acceptance JS=1` (in your main shell)
 
 ## author/contact
 
