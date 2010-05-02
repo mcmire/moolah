@@ -1,46 +1,90 @@
 require 'benchmark'
 require 'yaml'
 require 'set'
-require 'term/ansicolor'
+begin
+  require 'term/ansicolor'
+rescue LoadError
+  raise "\n\nError loading require_profiler: You need to install the term-ansicolor gem (this will let you see colorized reports).\n\n"
+end
 
-class String
-  include Term::ANSIColor
+def Color(str)
+  str.extend(Term::ANSIColor)
+  str
 end
 Term::ANSIColor.coloring = false
 
-# This overrides 'require' and `load` to record the time it takes to require
-# files within a section of your code, and then generates a report afterward.
-# It's intelligent enough to figure out where files were required from and
-# construct a hierarchy of the required files.
+#------------------
+# require_profiler
+# Author: Elliot Winkler <elliot.winkler@gmail.com>
+# Version: 0.3.pre (2 May 2010)
+# You can always find the latest version at: http://gist.github.com/277289
+#------------------ 
 #
-# To use, copy this file to lib/require_profiling.rb, require it somewhere, then
-# wrap the code you want to measure in a `profile` block. Like so:
+# WHAT IS THIS?
 #
-#   require 'lib/require_profiling'
-#   RequireProfiling.profile do
+# This script of sorts overrides 'require' and `load` to record the time it takes
+# to require files within a section of your code, and then generates a report
+# afterward. It's intelligent enough to figure out where files were required
+# from and construct a hierarchy of the required files.
+#
+# INSTALLATION
+#
+# First, `gem install term-ansicolor` so you can see the reports in color
+# (which I think you'll appreciate).
+#
+# Next, copy this file to some location. For a Rails or other app, lib/require_profiler.rb
+# is a good location. Finally, require it somewhere and wrap the code you want to
+# measure in a `profile` block. Like so:
+#
+#   require '/path/to/lib/require_profiler'
+#   RequireProfiler.profile do
 #     # load, say, your boot or environment file here
 #   end
 #
 # Alternatively, you can use `start` and `stop`:
 #
-#   require 'lib/require_profiling'
-#   RequireProfiling.start
+#   require '/path/to/lib/require_profiler'
+#   RequireProfiler.start
 #   # load, say, your boot or environment file here
-#   RequireProfiling.stop
+#   RequireProfiler.stop
 #
-# When profiling stops, a report will be written to APP_DIR/tmp/require_profile.log.
-# If you ever need to regenerate the report, simply run:
+# For a Rails app, we want to stop the profiler after the application is initialized.
+# For Rails 2, you can place the following at the top of the Rails::Initializer
+# block in your config/environment.rb file:
 #
-#   ruby lib/require_profiling.rb
+#   require File.expand_path(File.dirname(__FILE__) + '/../lib/require_profiler')
+#   RequireProfiler.start
+#   config.after_initialize { RequireProfiler.stop }
+#
+# For Rails 3, you can simply wrap everything in config/environment.rb in a `profile`
+# block, so the file looks something like:
+#
+#   require File.expand_path(File.dirname(__FILE__) + '/../lib/require_profiler')
+#   RequireProfiler.profile do
+#     # Load the rails application
+#     require File.expand_path('../application', __FILE__)
+#     # Initialize the rails application
+#     YourApp::Application.initialize!
+#   end
+#
+# GENERATING THE REPORT
+#
+# Now all you have to do is run your code by passing PROFILE=1 as an environment
+# variable on the command line. For instance, if you were running a Rails app,
+# you'd say script/server PROFILE=1` (or `rails server PROFILE=1` for Rails 3).
+#
+# When profiling stops, a report will be written to APP_DIR/tmp/require_profile.log
+# (or /tmp/require_profile.log, if APP_DIR/tmp doesn't exist). If you ever need to
+# regenerate this report, simply run:
+#
+#   ruby lib/require_profiler.rb
 #
 # There are several command options that let you customize the report. To view
 # them, say:
 #
-#   ruby lib/require_profiling.rb --help
+#   ruby lib/require_profiler.rb --help
 #
-#---
-#
-# Bugs:
+# KNOWN ISSUES
 #
 # * Files that are autoload'ed (as is common these days) are not caught by this
 #   script. This is because Kernel.autoload doesn't call Kernel#require or even
@@ -52,11 +96,7 @@ Term::ANSIColor.coloring = false
 #   know how to do this, but if you want to take a crack at it, feel free!
 #   Be sure to let me know so I can try it out too.
 #
-##---
-#
-# Author: Elliot Winkler <elliot.winkler@gmail.com>
-#
-module RequireProfiling
+module RequireProfiler
   class << self
     def profiling_enabled?
       @profiling_enabled
@@ -72,39 +112,40 @@ module RequireProfiling
       @options = tmp_options
       start
       yield
-    ensure
       stop
       self.options = current_options
     end
     
     def start(tmp_options={})
-      return unless ENV["RPROFILE"] or $RPROFILE
+      return unless ENV["PROFILE"] or $PROFILE
       @start_time = Time.now
-      [ Kernel, (class << Kernel; self; end) ].each do |klass|
+      [ ::Kernel, (class << ::Kernel; self; end) ].each do |klass|
         klass.class_eval do
           def require_with_profiling(path, *args)
-            RequireProfiling.measure(path, caller, :require) { require_without_profiling(path, *args) }
+            RequireProfiler.measure(path, caller, :require) { require_without_profiling(path, *args) }
           end
-          alias_method :require_without_profiling, :require
-          alias_method :require, :require_with_profiling
+          alias require_without_profiling require
+          alias require require_with_profiling
           
           def load_with_profiling(path, *args)
-            RequireProfiling.measure(path, caller, :load) { load_without_profiling(path, *args) }
+            RequireProfiler.measure(path, caller, :load) { load_without_profiling(path, *args) }
           end
-          alias_method :load_without_profiling, :load
-          alias_method :load, :load_with_profiling
+          alias load_without_profiling load
+          alias load load_with_profiling
         end
       end
+      # This is necessary so we don't clobber Bundler.require on Rails 3
+      Kernel.class_eval { private :require, :load }
       @profiling_enabled = true
     end
     
     def stop
-      return unless ENV["RPROFILE"] or $RPROFILE
+      return unless ENV["PROFILE"] or $PROFILE
       @stop_time = Time.now
-      [ Kernel, (class << Kernel; self; end) ].each do |klass|
+      [ ::Kernel, (class << ::Kernel; self; end) ].each do |klass|
         klass.class_eval do
-          alias_method :require, :require_without_profiling
-          alias_method :load, :load_without_profiling
+          alias require require_without_profiling
+          alias load load_without_profiling
         end
       end
       store_profile_data
@@ -220,7 +261,7 @@ module RequireProfiling
       
       unless options[:stdout]
         out = "Wrote report to #{report_file}."
-        out << " Run `ruby lib/require_profiling.rb` if you want to regenerate the report." unless regenerating_report
+        out << " Run `ruby lib/require_profiler.rb` if you want to regenerate the report." unless regenerating_report
         puts(out)
       end
     end
@@ -237,11 +278,13 @@ module RequireProfiling
           puts
           puts "OPTIONS:"
           puts "--list (all|root)        - Lists all files, or just the top-level ones."
-          puts "--all                    - Short for --list all."
-          puts "--root                   - Short for --list root."
+          puts "--all                    - Short for --list all --order ascending."
+          puts "--root                   - Short for --list root --order ascending."
           puts "--nested                 - Arranges files in a hierarchy. Implies --all."
           puts "--sort (time|index)      - Sorts files by how long it took to require them, or the order in which they were required."
           puts "                           (Technically, --sort time is really --sort time,index, and index is always ascending.)"
+          puts "--sequential             - Short for --sort index --order ascending."
+          puts "--temporal               - Short for --sort time --order descending."
           puts "--order (asc|desc)       - For --sort time, orders files by earliest-to-latest, or latest-to-earliest."
           puts "                           For --sort index, orders files by first-to-last, or last-to-first."
           puts "--ascending, --asc       - Short for --order asc."
@@ -250,13 +293,19 @@ module RequireProfiling
           puts "--color                  - Colors parts of the report so you can read it better (try it!)."
           puts "                           Most useful with --stdout."
           puts
-          puts "Default options, if none are specified: --list root --sort time --descending"
+          puts "Default options: --root --sort time --descending"
           puts
           exit
         when "--descending", "--desc"
           @options[:order] = :desc
         when "--ascending", "--asc"
           @options[:order] = :asc
+        when "--sequential"
+          @options[:sort] = :index
+          @options[:order] ||= :asc
+        when "--temporal"
+          @options[:sort] = :time
+          @options[:order] ||= :desc
         when "--all"
           @options[:list] = :all
           @options[:order] ||= :asc
@@ -288,21 +337,26 @@ module RequireProfiling
     end
     
     def data_file
-      "#{app_dir}/tmp/require_profile.yml"
+      "#{tmp_dir}/require_profile.yml"
     end
     
     def report_file
-      "#{app_dir}/tmp/require_profile.log"
+      "#{tmp_dir}/require_profile.log"
     end
     
     def app_dir
       @app_dir ||= File.expand_path(File.dirname(__FILE__) + "/..")
+    end
+    
+    def tmp_dir
+      @tmp_dir ||= File.exists?("#{app_dir}/tmp") ? "#{app_dir}/tmp" : Dir.tmpdir
     end
   
     def find_file(path)
       return expand_absolute_path(path) if path =~ /^\//
       expanded_path = nil
       # Try to find the path in the ActiveSupport load paths and then the built-in load paths
+      # I'm not really sure if this is how Rails does it, so correct me if I'm wrong
       load_paths = []
       load_paths += ActiveSupport::Dependencies.load_paths if defined?(ActiveSupport) && defined?(ActiveSupport::Dependencies)
       load_paths += $:
@@ -400,25 +454,25 @@ module RequireProfiling
         path = file[:full_path] ? format_path(file[:full_path]) : file[:path]
 
         line = ""
-        line << ("%d)" % (file[:index]+1)).rjust(4).yellow
+        line << Color(("%d)" % (file[:index]+1)).rjust(4)).yellow
         line << " #{path}"
         if file[:loaded_via]
-          line << " (#{file[:loaded_via]})".bold.black
+          line << Color(" (#{file[:loaded_via]})").bold.black
         end
         if file[:time]
           ms = file[:time].to_f * 1000
-          line << (" [%.1f ms]" % ms).magenta.bold
+          line << Color(" [%.1f ms]" % ms).magenta.bold
           total_time += file[:time]
         end
         if child_total_time
           ms = child_total_time.to_f * 1000
-          line << (" [%.1f ms children]" % ms).green.bold
+          line << Color(" [%.1f ms children]" % ms).green.bold
         end
         #if file[:is_root] && file[:parent]
         #  out << " (required by #{file[:parent][:full_path]})".bold.black
         #end
         if !file[:parent] && file[:fake]
-          line << " (already loaded)".bold.black
+          line << Color(" (already loaded)").bold.black
         end
         out << ("  " * indent_level) + line + "\n"
         out << child_out if child_out
@@ -433,6 +487,6 @@ module RequireProfiling
 end
 
 if __FILE__ == $0
-  RequireProfiling.parse_argv(ARGV)
-  RequireProfiling.generate_profile_report(true)
+  RequireProfiler.parse_argv(ARGV)
+  RequireProfiler.generate_profile_report(true)
 end
