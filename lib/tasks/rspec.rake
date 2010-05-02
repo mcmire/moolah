@@ -28,7 +28,7 @@ namespace :spec do
         options[:javascript] = (ENV["JS"] == "1")
         File.open("tmp/acceptance_spec.opts", "w") {|f| YAML.dump(options, f) }
       else
-        t.spec_opts += ['--format', 'progress']
+        t.spec_opts += ['--format', 'specdoc']
       end
       t.spec_files = FileList["spec/#{sub}/**/*_spec.rb"]
     end
