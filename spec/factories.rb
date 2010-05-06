@@ -1,5 +1,4 @@
 Factory.define :account do |f|
-  f.add_attribute(:id, "checking")
   f.name "Checking"
 end
 
@@ -14,4 +13,11 @@ Factory.define :transaction do |f|
   f.amount 100
   f.original_description "Some transaction"
   f.settled_on Date.new(2010, 1, 1)
+end
+
+Factory.define :import_rule do |f|
+  f.association :account
+  f.association :category
+  f.pattern "^foo$"
+  f.description "Some description"
 end

@@ -13,6 +13,7 @@ module Rack
     end
 
     def call(env)
+      # Can only do GET requests here because other methods will be converted to GET upon redirect
       if env['PATH_INFO'] =~ %r{^/(.*)/$} && env['REQUEST_METHOD'] == "GET"
         location = "#{env['rack.url_scheme']}://#{env['HTTP_HOST']}/#{$1}"
         location = "#{location}?#{env['QUERY_STRING']}" if env['QUERY_STRING'].to_s =~ /\S/

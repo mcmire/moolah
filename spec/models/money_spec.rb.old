@@ -1,0 +1,61 @@
+require File.expand_path(File.dirname(__FILE__) + "/spec_helper")
+
+describe Money do
+  describe '.from_amount' do
+    it "creates a credit Money object from the given positive integer" do
+      Money.from_amount(2354).should == Money.new(:value => 23.54, :type => :credit)
+    end
+    it "creates a debit Money object from the given negative integer" do
+      Money.from_amount(-2354).should == Money.new(:value => 23.54, :type => :debit)
+    end
+  end
+  
+  describe '.new' do
+    it "sets @value to the value part of the given hash" do
+      Money.new("value" => 23.54).value.should == 23.54
+    end
+    it "numifies the value" do
+      Money.new("value" => "23.54").value.should == 23.54
+    end
+    it "converts a negative value to a positive one" do
+      Money.new("value" => -23.54).value.should == 23.54
+    end
+    it "converts a negative value to a positive one even if it's a string" do
+      Money.new("value" => "-23.54").value.should == 23.54
+    end
+    it "sets @type to the type part of the given hash" do
+      Money.new("type" => "debit").type.should == "debit"
+    end
+    it "converts type to a string" do
+      Money.new("type" => :debit).type.should == "debit"
+    end
+    it "also accepts a hash with symbol keys" do
+      money = Money.new(:value => 23.54, :type => "debit")
+      money.value.should == 23.54
+      money.type.should == "debit"
+    end
+  end
+  
+  describe '#to_amount' do
+    it "returns an positive integer version of the value for a credit amount" do
+      money = Money.new(:value => 23.54, :type => "credit")
+      money.to_amount.should == 2354
+    end
+    it "returns an negative integer version of the value for a debit amount" do
+      money = Money.new(:value => 23.54, :type => "debit")
+      money.to_amount.should == -2354
+    end
+  end
+  
+  describe '#==' do
+    it "returns true if the given Money object has the same value and type as this one" do
+      Money.new(:value => 23.54, :type => :debit).should == Money.new("value" => "23.54", "type" => "debit")
+    end
+    it "returns false if the given Money object doesn't have the same value as this one" do
+      Money.new(:value => 23.54, :type => :debit).should == Money.new("value" => "23.53", "type" => "debit")
+    end
+    it "returns false if the given Money object doesn't have the type value as this one" do
+      Money.new(:value => 23.54, :type => :debit).should == Money.new("value" => "23.54", "type" => "credit")
+    end
+  end
+end

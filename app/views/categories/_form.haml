@@ -1,0 +1,9 @@
+- resourceful_form_for category, :html => {:id => "stylish"} do |f|
+  = f.error_messages
+  %div
+    = f.label :name
+    = f.text_field :name, :size => 50
+  %div
+    = f.submit button_text
+    or
+    = link_to "Cancel", url(:categories, :index)

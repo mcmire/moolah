@@ -1,0 +1,31 @@
+- @title = "Import Rules"
+
+- content_for :head do
+  = javascript_include_tag "lib/restful_destroy"
+
+- if @import_rules.any?
+  - form_tag url(:import_rules, :dispatch), :id => "form" do
+    %p
+      = submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :class => "delete", :title => "Are you sure you want to delete these import rules?"
+    %table#import_rules
+      %tr
+        %th= check_box_tag "delete_all", :id => "delete_all"
+        %th Pattern
+        %th Account
+        %th Category
+        %th Description
+        %td
+        %td
+      - for import_rule in @import_rules
+        %tr{:id => "import_rule_#{import_rule.id}"}
+          %td= check_box_tag "to_delete[]", :value => import_rule.id, :id => "to_delete_#{import_rule.id}", :class => "delete_box"
+          %td== /#{import_rule.pattern.source}/
+          %td= import_rule.account.name
+          %td= import_rule.category.name
+          %td= import_rule.description
+          %td= link_to "Edit", url(:import_rules, :edit, :id => import_rule.id)
+          %td= link_to "Delete", url(:import_rules, :delete, :id => import_rule.id), :class => "delete", :title => "Are you sure you want to delete this import rule?"
+- else
+  %p No import rules.
+
+%p= link_to "Add an import rule", url(:import_rules, :new)

@@ -1,0 +1,11 @@
+- @title = "Import Transactions into #{@account.name}"
+
+- form_tag nil, :multipart => true do
+  %p
+    %label(for="file") File
+    %input(type="file" id="file" name="file")
+  %p
+    %button(type="submit") Import
+
+%p
+  = link_to "Return to list", url(:transactions, :index, :account_id => params[:account_id])

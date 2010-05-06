@@ -1,0 +1,15 @@
+- form_tag url(:categories, :destroy_multiple), :method => "delete" do
+
+  - for id in @ids
+    %input(type="hidden" name="to_delete[]" value="#{id}")
+
+  %p Are you sure you want to delete these categories?
+
+  %ul
+    - for category in @categories
+      %li== <b>#{category.name}</b>
+  
+  %p
+    = submit_tag "Yes, delete"
+    or
+    = link_to "No, never mind", url(:categories, :index)

@@ -7,24 +7,28 @@ feature "Editing transactions" do
   EOT
   
   scenario "Editing a transaction" do
+    account = Factory(:account, :name => "Checking")
     trans = Factory(:transaction,
+      :account => account,
       :settled_on => Date.new(2010, 3, 1),
       :original_description => "Transaction 1",
       :amount => 2000
     )
-    visit "/transactions/checking"
+    visit "/"
+    
+    click "Checking"
     within("#transaction_#{trans.id}") do
       click "Edit"
     end
-    select "Debit", :from => "transaction_kind"
+
+    select "Debit", :from => "transaction[amount][type]"
     fill_in "transaction_description", :with => "The best transaction"
-    fill_in "transaction_amount", :with => "123.45"
     click "Update"
-    current_path.should == "/transactions/checking"
+
     body.should =~ /Transaction successfully updated/
     tableish('#transactions tr', 'th,td').should == [
       ["", "Date", "Check #", "Description", "Amount", "", ""],
-      ["", "03/01/2010",  "", "The best transaction", "-$123.45", "Edit", "Delete"]
+      ["", "03/01/2010",  "", "The best transaction", "-$20.00", "Edit", "Delete"]
     ]
   end
 end

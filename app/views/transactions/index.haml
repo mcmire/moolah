@@ -4,18 +4,18 @@
   = javascript_include_tag "lib/restful_destroy", "transactions/index"
 
 %ul
-  %li= link_to "All", url(:transactions, :index)
-  %li= link_to "Checking", url(:transactions, :index, :account_id => "checking")
-  %li= link_to "Savings", url(:transactions, :index, :account_id => "savings")
+  %li= link_to "All", url(:transactions, :index, :account_id => nil)
+  - for account in Account.all
+    %li= link_to account.name, url(:transactions, :index, :account_id => account.webkey)
 
 - if @transactions.any?
-  - form_tag url(:transactions, :dispatch), :id => "form" do
+  - form_tag url(:transactions, :dispatch, :account_id => params[:account_id]), :id => "form" do
     %p
       = submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :class => "delete", :title => "Are you sure you want to delete these transactions?"
     %table#transactions
       %tr
         %th= check_box_tag "delete_all", :id => "delete_all"
-        - unless @account_id
+        - unless @account
           %th Account
         %th Date
         %th Check #
@@ -26,21 +26,20 @@
       - for transaction in @transactions
         %tr{:id => "transaction_#{transaction.id}"}
           %td= check_box_tag "to_delete[]", :value => transaction.id, :id => "to_delete_#{transaction.id}", :class => "delete_box"
-          - unless @account_id
-            %td= transaction.account_id.capitalize
+          - unless params[:account_id]
+            %td= transaction.account.name
           %td= transaction.settled_on.strftime("%m/%d/%Y")
           %td= transaction.check_number
           %td= transaction.description
           %td= transaction.amount_as_currency
-          %td= link_to "Edit", url(:transactions, :edit, :id => transaction.id)
-          %td= link_to "Delete", url(:transactions, :delete, :id => transaction.id), :class => "delete", :title => "Are you sure you want to delete this transaction?"
+          %td= link_to "Edit", url(:transactions, :edit, :id => transaction.id, :account_id => transaction.account.webkey)
+          %td= link_to "Delete", url(:transactions, :delete, :id => transaction.id, :account_id => transaction.account.webkey), :class => "delete", :title => "Are you sure you want to delete this transaction?"
 - else
   %p No transactions.
 
-- if @account_id
-  %p= link_to "Upload transactions to #{@account_id}", url(:transactions, :upload, :account_id => @account_id)
-
-%p= link_to "Add a new transaction", url(:transactions, :new)
+- if @account
+  %p= link_to "Import transactions into #{@account.name.downcase} account", url(:transactions, :import, :account_id => params[:account_id])
+  %p= link_to "Add a transaction", url(:transactions, :new, :account_id => params[:account_id])
 
 %hr
 

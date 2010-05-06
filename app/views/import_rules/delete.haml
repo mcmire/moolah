@@ -1,0 +1,11 @@
+- form_tag url(:import_rules, :destroy, :id => @import_rule.id), :method => "delete" do
+
+  %p Are you sure you want to delete this import rule?
+
+  %ul
+    %li== <b>#{@import_rule.pattern.source})</b>
+  
+  %p
+    = submit_tag "Yes, delete"
+    or
+    = link_to "No, never mind", url(:import_rules, :index)

@@ -14,7 +14,7 @@ Moolah.helpers do
   
   def resourceful_form_for(record, options={}, &block)
     unless options[:url]
-      controller_name = record.class.to_s.downcase.pluralize.to_sym
+      controller_name = record.class.to_s.underscore.pluralize.to_sym
       if record.new_record?
         url = url(controller_name, :create)
         method = "post"

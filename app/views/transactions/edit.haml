@@ -1,3 +1,9 @@
 - @title = "Editing transaction"
 
-= partial "transactions/form", :locals => { :transaction => @transaction, :button_text => "Update", :last_account_id => @last_account_id }
+= partial "transactions/form", |
+  :locals => { |
+    :transaction => @transaction, |
+    :url => url(:transactions, :update, :id => @transaction, :account_id => params[:account_id]), |
+    :method => "put", |
+    :button_text => "Update" |
+  } |

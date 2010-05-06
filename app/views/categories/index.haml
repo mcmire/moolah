@@ -1,0 +1,25 @@
+- @title = "Categories"
+
+- content_for :head do
+  = javascript_include_tag "lib/restful_destroy"
+
+- if @categories.any?
+  - form_tag url(:categories, :dispatch), :id => "form" do
+    %p
+      = submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :class => "delete", :title => "Are you sure you want to delete these categories?"
+    %table#categories
+      %tr
+        %th= check_box_tag "delete_all", :id => "delete_all"
+        %th Name
+        %td
+        %td
+      - for category in @categories
+        %tr{:id => "category_#{category.id}"}
+          %td= check_box_tag "to_delete[]", :value => category.id, :id => "to_delete_#{category.id}", :class => "delete_box"
+          %td= category.name
+          %td= link_to "Edit", url(:categories, :edit, :id => category.id)
+          %td= link_to "Delete", url(:categories, :delete, :id => category.id), :class => "delete", :title => "Are you sure you want to delete this category?"
+- else
+  %p No categories.
+
+%p= link_to "Add a category", url(:categories, :new)

@@ -13,7 +13,7 @@ require 'spork'
 
 Spork.prefork do
   # UGH... fag
-  Object.const_set(:I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2, true)
+  #Object.const_set(:I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2, true)
   
   Object.const_set(:PADRINO_ENV, 'test') unless defined?(PADRINO_ENV)
   require File.expand_path(File.dirname(__FILE__) + "/../config/boot")
@@ -23,12 +23,12 @@ Spork.prefork do
   # Requires supporting files with custom matchers and macros, etc,
   # in ./support/ and its subdirectories.
   Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
-
-  Spec::Runner.configure do |config|
-    config.mock_with :mocha
-  end
   
   Object.const_set(:TEST_DIR, "#{PADRINO_ROOT}/test")
+  
+  Spec::Runner.configure do |config|
+    config.ignore_backtrace_patterns /sinatra/, /padrino-framework/, /rack/, /spork/
+  end
 end
 
 Spork.each_run do

@@ -17,10 +17,14 @@ class Moolah < Padrino::Application
     # layout :foo                 # Layout can be in views/layouts/foo.ext or views/foo.ext (:application is default)
     # 
     
-    # use Rack::LessCss, :less_path => "#{PADRINO_ROOT}/app/stylesheets", :css_route => "/stylesheets"
-    use Rack::TrailingSlash
+    # For some reason after upgrading to 0.9.10 we have to do this..
     enable :sessions
     enable :flash
+    
+    register RestfulActions
+    
+    # use Rack::LessCss, :less_path => "#{PADRINO_ROOT}/app/stylesheets", :css_route => "/stylesheets"
+    use Rack::TrailingSlash
     
     layout "application"
   end

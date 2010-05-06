@@ -1,0 +1,15 @@
+- form_tag url(:import_rules, :destroy_multiple), :method => "delete" do
+
+  - for id in @ids
+    %input(type="hidden" name="to_delete[]" value="#{id}")
+
+  %p Are you sure you want to delete these import rules?
+
+  %ul
+    - for import_rule in @import_rules
+      %li== <b>#{import_rule.pattern.source}</b>
+  
+  %p
+    = submit_tag "Yes, delete"
+    or
+    = link_to "No, never mind", url(:import_rules, :index)

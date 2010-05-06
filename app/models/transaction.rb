@@ -1,15 +1,16 @@
 require 'digest/sha1'
+require 'money'
 
 class Transaction
   include MongoMapper::Document
   
-  key :sha1, String, :required => true
+  key :sha1, String#, :required => true
   #key :parent_id, Integer
-  key :account_id, String, :required => true # checking, savings
+  key :account_id, ObjectId#, :required => true # checking, savings
   key :transaction_type_id, Integer  # cc, atm, etc.
   key :category_id, ObjectId # gas, rent, etc.
   key :check_number, Integer
-  key :amount, Float, :required => true
+  key :amount, Money, :required => true
   key :original_description, String
   key :description, String, :required => true
   key :settled_on, Date, :required => true
@@ -37,20 +38,25 @@ class Transaction
   end
   
   def kind
-    (amount > 0 ? "credit" : "debit")
+    amount && amount.type
   end
   
   def amount_as_currency
-    (amount < 0 ? "-" : "") + "$" + ("%.2f" % (amount.abs / 100.0))
+    amount && amount.value_as_currency
   end
   
-  def amount_as_decimal
-    amount.abs / 100.0
-  end
+  #def amount_as_money=(money_or_attrs)
+  #  @amount_as_money = attrs.is_a?(Hash) ? Money.new(money_or_attrs) : money_or_attrs
+  #  self.amount = @amount_as_money.to_amount
+  #end
+  #def amount_as_money
+  #  return @amount_as_money if defined?(@amount_as_money)
+  #  @amount_as_money = Money.from_amount(amount)
+  #end
   
   # TODO: Instead of saving each transaction one by one,
   # is there a way we can save them all at once?
-  def self.import!(file, account_id)
+  def self.import!(file, account)
     # accepts a String or IO object
     csv = FasterCSV.new(file)
     rows = csv.read
@@ -59,7 +65,7 @@ class Transaction
       next if i == 0 # skip header row
       row = row.map {|col| col.strip }
       transaction = Transaction.new(
-        :account_id => account_id,
+        :account => account,
         :settled_on => Date.fast_parse(row[0]),
         :check_number => row[1],
         :original_description => row[2],

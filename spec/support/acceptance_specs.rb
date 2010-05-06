@@ -179,3 +179,7 @@ class AcceptanceExampleGroup < Spec::Example::ExampleGroup
   
   Spec::Example::ExampleGroupFactory.register(:acceptance, self)
 end
+
+Spec::Runner.configure do |config|
+  config.ignore_backtrace_patterns /capybara/
+end

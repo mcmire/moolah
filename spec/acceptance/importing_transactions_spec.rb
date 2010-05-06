@@ -1,16 +1,21 @@
 require File.expand_path(File.dirname(__FILE__) + "/spec_helper")
 
-feature "Uploading transactions" do
+feature "Importing transactions" do
   story <<-EOT
     As a user
     I want to be able to upload a CSV of my transactions
     So that I do not have to spend time entering all of them by hand
   EOT
   
-  scenario "Uploading a CSV of transactions" do
-    visit "/transactions/checking/upload"
+  before do
+    Factory(:account)
+  end
+  
+  scenario "Importing a CSV of transactions" do
+    visit "/accounts/checking/transactions/import"
     attach_file "file", "#{PADRINO_ROOT}/spec/fixtures/transactions.csv"
-    click "Upload"
+    click "Import"
+    current_path.should == "/accounts/checking/transactions"
     tableish('#transactions tr', 'th,td').should == [
       ["", "Date",        "Check #", "Description",                   "Amount", "", ""],
       ["", "01/14/2008",  "",        "TARGET T0695 C  TARGET T0695",  "-$124.88", "Edit", "Delete"],
@@ -22,13 +27,13 @@ feature "Uploading transactions" do
     body.should =~ /5 transactions were successfully imported/
   end
   
-  scenario "Uploading duplicate transactions" do
-    visit "/transactions/checking/upload"
+  scenario "Importing duplicate transactions" do
+    visit "/accounts/checking/transactions/import"
     attach_file "file", "#{PADRINO_ROOT}/spec/fixtures/transactions.csv"
-    click "Upload"
-    visit "/transactions/checking/upload"
+    click "Import"
+    visit "/accounts/checking/transactions/import"
     attach_file "file", "#{PADRINO_ROOT}/spec/fixtures/transactions.csv"
-    click "Upload"
+    click "Import"
     body.should =~ /No transactions were imported/
   end
 end

@@ -8,13 +8,14 @@ feature "Listing transactions" do
   EOT
   
   scenario "Listing no transactions" do
-    visit "/transactions"
+    visit "/"
+    click "Transactions"
     body.should =~ /No transactions/
   end
   
   scenario "Listing all transactions" do
-    checking = Factory(:account, :id => "checking")
-    savings = Factory(:account, :id => "savings")
+    checking = Factory(:account, :name => "Checking")
+    savings = Factory(:account, :name => "Savings")
     Factory(:transaction,
       :account => checking,
       :settled_on => Date.new(2009, 1, 1),
@@ -27,7 +28,8 @@ feature "Listing transactions" do
       :description => "Another transaction",
       :amount => -500
     )
-    visit "/transactions"
+    visit "/"
+    click "Transactions"
     tableish('#transactions tr', 'th,td').should == [
       ["", "Account", "Date", "Check #", "Description", "Amount", "", ""],
       ["", "Savings", "02/01/2009",  "", "Another transaction", "-$5.00", "Edit", "Delete"],
@@ -35,9 +37,17 @@ feature "Listing transactions" do
     ]
   end
   
+  scenario "Listing no transactions in a certain account" do
+    Factory(:account, :name => "Checking")
+    visit "/"
+    click "Transactions"
+    click "Checking"
+    body.should =~ /No transactions/
+  end
+  
   scenario "Listing transactions in a certain account" do
-    checking = Factory(:account, :id => "checking")
-    savings = Factory(:account, :id => "savings")
+    checking = Factory(:account, :name => "Checking")
+    savings = Factory(:account, :name => "Savings")
     Factory(:transaction,
       :account => checking,
       :settled_on => Date.new(2009, 1, 1),
@@ -50,7 +60,9 @@ feature "Listing transactions" do
       :description => "Another transaction",
       :amount => -500
     )
-    visit "/transactions/savings"
+    visit "/"
+    click "Transactions"
+    click "Savings"
     tableish('#transactions tr', 'th,td').should == [
       ["", "Date", "Check #", "Description", "Amount", "", ""],
       ["", "02/01/2009",  "", "Another transaction", "-$5.00", "Edit", "Delete"],

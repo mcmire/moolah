@@ -1,4 +1,4 @@
-- form_tag url(:transactions, :destroy, :id => @transaction.id), :method => "delete" do
+- form_tag url(:transactions, :destroy, :id => @transaction.id, :account_id => params[:account_id]), :method => "delete" do
 
   %p Are you sure you want to delete this transaction?
 

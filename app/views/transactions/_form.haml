@@ -1,14 +1,11 @@
-- resourceful_form_for transaction, :html => {:id => "stylish"} do |f|
+- form_for transaction, url, :id => "stylish", :method => method do |f|
   = f.error_messages
   %div
-    = label_tag "transaction_kind"
-    = select_tag "transaction_kind", :options => [["Debit", "debit"], ["Credit", "credit"]], :value => transaction.kind
+    = label_tag "transaction[amount][type]", :caption => "Type"
+    = select_tag "transaction[amount][type]", :options => [["Debit", "debit"], ["Credit", "credit"]], :value => (transaction.amount && transaction.amount.type)
   %div
-    = f.label :account_id
-    = f.select :account_id, :options => [["Checking", "checking"], ["Savings", "savings"]]
-  %div
-    %label Category:
-    = f.select :category_id, :options => [["", ""]] + Category.all.map {|c| [c.name, c.id] }
+    = f.label :category_id, :caption => "Category"
+    = f.select :category_id, :options => [["Uncategorized", ""]] + Category.all.map {|c| [c.name, c.id] }
   - unless transaction.new_record?
     %div
       %label Original description:
@@ -20,8 +17,8 @@
     = f.label :check_number
     = f.text_field :check_number, :size => 4
   %div
-    = f.label :amount
-    = f.text_field :amount, :size => 6, :value => (transaction.amount && transaction.amount_as_decimal)
+    = label_tag "transaction[amount][value]", :caption => "Amount"
+    = text_field_tag "transaction[amount][value]", :size => 6, :value => (transaction.amount && transaction.amount.value)
   %div
     = f.label :settled_on
     = f.text_field :settled_on, :size => 12
@@ -36,4 +33,4 @@
   %div
     = f.submit button_text
     or
-    = link_to "Cancel", url(:transactions, :index, :account_id => last_account_id)
+    = link_to "Cancel", url(:transactions, :index, :account_id => params[:account_id])
