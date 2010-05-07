@@ -12,21 +12,20 @@ X Destroy multiple is broken?
   - monthly and biweekly net worth
   - monthly and biweekly income rate (with avg line)
 X Auto-assignment of category, transaction type, and description upon import
-* Add category management
-* Add import rule management
-* Add account management
-* Test last_view on transactions
-* Flesh out the integration specs
+X Add category management
+X Add import rule management
+X Test last_view on transactions
+X Flesh out the integration specs
 
 * Switch to Mongoid
-* Use inherited_resources
-* Fix javascript delete multiple actions
-* Add transaction type management
-* Enforce Ruby 1.9?
-* Store amount in cents, silly!
+* Switch to Ruby 1.9 (enforce too?)
 * Make integration stuff into a gem and require that instead (and convert over to spec/integration)
-* Paginate the list
+* Paginate the transaction list
+* Fix javascript delete multiple actions
+* Get graphs working again
 * CSSify this biatch (reset stylesheet, vertical rhythm, etc.)
+
+* Add account management
 * Javascript add/edit (click on a line to edit, click out to cancel)
 * Upon import, show a line in between current import and existing data (so we know what we've imported)
 * Sort by column in transactions list
