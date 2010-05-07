@@ -1,7 +1,7 @@
 Moolah.controller :categories do
   
   restful :index do
-    @categories = Category.all
+    @categories = Category.all(:order => "name")
     render 'categories/index'
   end
   

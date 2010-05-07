@@ -13,13 +13,15 @@ feature "Listing categories" do
   end
   
   scenario "Listing all categories" do
-    Factory(:category, :name => "Something")
-    Factory(:category, :name => "Something Else")
+    Factory(:category, :name => "Poppy Seeds")
+    Factory(:category, :name => "Abracadabra")
+    Factory(:category, :name => "Zing Way")
     visit "/categories"
     tableish('#categories tr', 'th,td').should == [
       ["", "Name", "", ""],
-      ["", "Something", "Edit", "Delete"],
-      ["", "Something Else", "Edit", "Delete"]
+      ["", "Abracadabra", "Edit", "Delete"],
+      ["", "Poppy Seeds", "Edit", "Delete"],
+      ["", "Zing Way", "Edit", "Delete"]
     ]
   end
 end
