@@ -24,7 +24,7 @@ Spork.prefork do
   # in ./support/ and its subdirectories.
   Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
   
-  Object.const_set(:TEST_DIR, "#{PADRINO_ROOT}/test")
+  Object.const_set(:TEST_DIR, "#{PADRINO_ROOT}/spec")
   
   Spec::Runner.configure do |config|
     config.ignore_backtrace_patterns /sinatra/, /padrino-framework/, /rack/, /spork/

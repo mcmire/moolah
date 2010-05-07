@@ -67,21 +67,21 @@ feature "Deleting categories" do
     end
     
     # FIXME
-    xscenario "Deleting some multiple categories" do
-      category1 = Factory(:category, :name => "Category 1")
-      category2 = Factory(:category, :name => "Category 2")
-      visit "/"
-      
-      click "Categories"
-      check "to_delete_#{category1.id}"
-      check "to_delete_#{category2.id}"
-      browser.confirm(true) do
-        within('#form') do
-          click_button "Delete checked"
-        end
-      end
-
-      body.should =~ /2 categories were successfully deleted/
-    end
+    #scenario "Deleting some multiple categories" do
+    #  category1 = Factory(:category, :name => "Category 1")
+    #  category2 = Factory(:category, :name => "Category 2")
+    #  visit "/"
+    #  
+    #  click "Categories"
+    #  check "to_delete_#{category1.id}"
+    #  check "to_delete_#{category2.id}"
+    #  browser.confirm(true) do
+    #    within('#form') do
+    #      click_button "Delete checked"
+    #    end
+    #  end
+    #
+    #  body.should =~ /2 categories were successfully deleted/
+    #end
   end
 end

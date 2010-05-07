@@ -28,33 +28,56 @@ feature "Adding import rules" do
     ]
   end
   
-  scenario "Adding an import rule for future imports from an existing transaction" do
+  scenario "Adding an import rule from an existing transaction" do
     account = Factory(:account, :name => "Checking")
     category = Factory(:category, :name => "Shopping")
-    Factory(:transaction,
+    txn1 = Factory(:transaction,
       :account => account,
       :category => category,
       :original_description => "TARGET T0695 C  TARGET T0695",
-      :settled_on => Date.new(2008, 1, 14)
+      :settled_on => Date.new(2008, 1, 1),
+      :amount => 123
+    )
+    txn2 = Factory(:transaction,
+      :account => account,
+      :category => category,
+      :original_description => "TARGET T0695 C  TARGET T0695",
+      :settled_on => Date.new(2008, 2, 14),
+      :amount => 345
     )
     visit "/"
     click "Checking"
     
-    click "Edit"
+    within "#transaction_#{txn2.id}" do
+      click "Edit"
+    end
     fill_in "transaction_description", :with => "Target"
     select "Shopping", :from => "transaction_category_id"
-    check "Auto-assign these settings to TARGET T0695 C  TARGET T0695 transactions from now on"
+    check "Apply these settings to past and future TARGET T0695 C  TARGET T0695 transactions"
     click "Update"
-    # .. todo: view import rules
     
+    within "#transaction_#{txn2.id}" do
+      click "Edit"
+    end
+    body.should =~ /Transactions named.*TARGET T0695 C  TARGET T0695.*are imported as.*Target/
+    
+    click "Import Rules"
+    tableish('#import_rules tr', 'th,td').should == [
+      ["", "Pattern", "Account", "Category", "Description", "", ""],
+      ["", "/^TARGET\\ T0695\\ C\\ \\ TARGET\\ T0695$/", "Checking", "Shopping", "Target", "Edit", "Delete"]
+    ]
+    
+    click "Transactions"
+    click "Checking"
     click "Import transactions into checking account"
     attach_file "file", "#{PADRINO_ROOT}/spec/fixtures/transactions2.csv"
     click "Import"
     
     tableish('#transactions tr', 'th,td').should == [
       ["", "Date", "Check #", "Description", "Amount", "", ""],
-      ["", "02/01/2009", "", "Target", "-$3.00", "Edit", "Delete"],
-      ["", "01/14/2008", "", "Target", "-$1.00", "Edit", "Delete"]
+      ["", "03/01/2009", "", "Target", "-$6.78", "Edit", "Delete"],
+      ["", "02/14/2008", "", "Target", "$3.45", "Edit", "Delete"],
+      ["", "01/01/2008", "", "Target", "$1.23", "Edit", "Delete"]
     ]
   end
 end

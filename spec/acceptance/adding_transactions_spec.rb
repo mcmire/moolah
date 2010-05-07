@@ -14,7 +14,7 @@ feature "Adding transactions" do
     click "Checking"
     
     click "Add a transaction"
-    select "Debit", :from => "transaction[amount][type]"
+    select "Credit", :from => "transaction[amount][type]"
     select "Some Category", :from => "transaction_category_id"
     fill_in "transaction_description", :with => "The best transaction"
     fill_in "transaction[amount][value]", :with => "123.45"
@@ -24,7 +24,7 @@ feature "Adding transactions" do
     body.should =~ /Transaction successfully added/
     tableish('#transactions tr', 'th,td').should == [
       ["", "Date", "Check #", "Description", "Amount", "", ""],
-      ["", "01/01/2010",  "", "The best transaction", "-$123.45", "Edit", "Delete"]
+      ["", "01/01/2010",  "", "The best transaction", "$123.45", "Edit", "Delete"]
     ]
   end
 end

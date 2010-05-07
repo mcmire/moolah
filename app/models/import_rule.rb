@@ -1,5 +1,6 @@
 class ImportRule
   include MongoMapper::Document
+  
   key :pattern, Regexp, :required => true
   key :account_id, ObjectId
   key :category_id, ObjectId
@@ -13,5 +14,10 @@ class ImportRule
   def pattern=(value)
     value = Regexp.new(value) unless value.is_a?(Regexp)
     set_pattern(value)
+  end
+  
+  def apply_to_all_transactions!
+    txns = Transaction.all(:original_description => pattern)
+    txns.each {|txn| txn.apply_import_rule!(self) }
   end
 end

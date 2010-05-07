@@ -22,7 +22,7 @@ class Transaction
   
   before_validation_on_create :store_sha1
   before_validation_on_create :set_description_from_original_description, :unless => :description?
-  after_save :create_import_rule!, :if => :creating_import_rule?
+  after_save :create_and_apply_import_rule!, :if => :creating_import_rule?
   
   validate :amount_must_not_be_zero
   
@@ -37,7 +37,7 @@ class Transaction
     end
   end
   
-  def kind
+  def type
     amount && amount.type
   end
   
@@ -45,26 +45,18 @@ class Transaction
     amount && amount.value_as_currency
   end
   
-  #def amount_as_money=(money_or_attrs)
-  #  @amount_as_money = attrs.is_a?(Hash) ? Money.new(money_or_attrs) : money_or_attrs
-  #  self.amount = @amount_as_money.to_amount
-  #end
-  #def amount_as_money
-  #  return @amount_as_money if defined?(@amount_as_money)
-  #  @amount_as_money = Money.from_amount(amount)
-  #end
-  
   # TODO: Instead of saving each transaction one by one,
   # is there a way we can save them all at once?
+  # Like through the Ruby driver?
   def self.import!(file, account)
     # accepts a String or IO object
     csv = FasterCSV.new(file)
     rows = csv.read
-    num_transactions_saved = 0
+    num_txns_saved = 0
     rows.each_with_index do |row, i|
       next if i == 0 # skip header row
       row = row.map {|col| col.strip }
-      transaction = Transaction.new(
+      txn = Transaction.new(
         :account => account,
         :settled_on => Date.fast_parse(row[0]),
         :check_number => row[1],
@@ -77,17 +69,17 @@ class Transaction
       number = -number if row[3].present?
       # MongoMapper: Something interesting is that this doesn't cast
       # the number to an int if the key is int (even though update_attributes/attributes= does)
-      transaction.amount = number
-      transaction.apply_import_rules
+      txn.amount = number
+      txn.apply_import_rule(txn.import_rule) if txn.import_rule
       # TODO: Make this automatic
-      transaction.sha1 = transaction.calculate_sha1
+      txn.sha1 = txn.calculate_sha1
       # Don't add the transaction if it's already been added
-      unless Transaction.exists?(:sha1 => transaction.sha1)
-        transaction.save!
-        num_transactions_saved += 1
+      unless Transaction.exists?(:sha1 => txn.sha1)
+        txn.save!
+        num_txns_saved += 1
       end
     end
-    num_transactions_saved
+    num_txns_saved
   ensure
     csv.close
   end
@@ -95,7 +87,7 @@ class Transaction
   def import_rule
     return if original_description.nil?
     @import_rule ||= begin
-      desc = Regexp.escape(original_description)#.inspect
+      desc = Regexp.escape(original_description)
       ImportRule.first("$where" => "this.pattern.test(\"#{desc}\")")
     end
   end
@@ -103,21 +95,25 @@ class Transaction
     !!import_rule
   end
   
-  def apply_import_rules  # well, one rule
-    if rule = import_rule
-      self.account_id = rule.account_id if rule.account_id
-      self.category_id = rule.category_id if rule.category_id
-      self.description = rule.description if rule.description
-    end
+  def apply_import_rule(rule)
+    self.account_id = rule.account_id   if rule.account_id
+    self.category_id = rule.category_id if rule.category_id
+    self.description = rule.description if rule.description
+  end
+  def apply_import_rule!(rule)
+    apply_import_rule(rule)
+    save!
   end
   
-  def create_import_rule!
-    ImportRule.create!(
+  def create_and_apply_import_rule!
+    rule = ImportRule.create!(
       :pattern => Regexp.new('^' + Regexp.escape(original_description) + '$'),
       :account_id => account_id,
       :category_id => category_id,
       :description => description
     )
+    rule.apply_to_all_transactions!
+    rule
   end
   
   def store_sha1

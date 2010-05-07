@@ -154,39 +154,39 @@ feature "Deleting transactions" do
     end
     
     # FIXME
-    xscenario "Deleting some multiple transactions" do
-      trans1 = Factory(:transaction, :original_description => "Transaction 1")
-      trans2 = Factory(:transaction, :original_description => "Transaction 2")
-      
-      visit "/"
-      check "to_delete_#{trans1.id}"
-      check "to_delete_#{trans2.id}"
-      browser.confirm(true) do
-        within('#form') do
-          click_button "Delete checked"
-        end
-      end
-
-      body.should =~ /2 transactions were successfully deleted/
-    end
+    #xscenario "Deleting some multiple transactions" do
+    #  trans1 = Factory(:transaction, :original_description => "Transaction 1")
+    #  trans2 = Factory(:transaction, :original_description => "Transaction 2")
+    #  
+    #  visit "/"
+    #  check "to_delete_#{trans1.id}"
+    #  check "to_delete_#{trans2.id}"
+    #  browser.confirm(true) do
+    #    within('#form') do
+    #      click_button "Delete checked"
+    #    end
+    #  end
+    #
+    #  body.should =~ /2 transactions were successfully deleted/
+    #end
     
     # FIXME
-    xscenario "Deleting some multiple transactions from a specific account" do
-      account = Factory(:account, :name => "Checking")
-      trans1 = Factory(:transaction, :account => account, :original_description => "Transaction 1")
-      trans2 = Factory(:transaction, :account => account, :original_description => "Transaction 2")
-      visit "/"
-      
-      click "Checking"
-      check "to_delete_#{trans1.id}"
-      check "to_delete_#{trans2.id}"
-      browser.confirm(true) do
-        within('#form') do
-          click_button "Delete checked"
-        end
-      end
-
-      body.should =~ /2 transactions were successfully deleted/
-    end
+    #xscenario "Deleting some multiple transactions from a specific account" do
+    #  account = Factory(:account, :name => "Checking")
+    #  trans1 = Factory(:transaction, :account => account, :original_description => "Transaction 1")
+    #  trans2 = Factory(:transaction, :account => account, :original_description => "Transaction 2")
+    #  visit "/"
+    #  
+    #  click "Checking"
+    #  check "to_delete_#{trans1.id}"
+    #  check "to_delete_#{trans2.id}"
+    #  browser.confirm(true) do
+    #    within('#form') do
+    #      click_button "Delete checked"
+    #    end
+    #  end
+    #
+    #  body.should =~ /2 transactions were successfully deleted/
+    #end
   end
 end

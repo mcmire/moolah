@@ -21,14 +21,13 @@ feature "Editing transactions" do
       click "Edit"
     end
 
-    select "Debit", :from => "transaction[amount][type]"
     fill_in "transaction_description", :with => "The best transaction"
     click "Update"
 
     body.should =~ /Transaction successfully updated/
     tableish('#transactions tr', 'th,td').should == [
       ["", "Date", "Check #", "Description", "Amount", "", ""],
-      ["", "03/01/2010",  "", "The best transaction", "-$20.00", "Edit", "Delete"]
+      ["", "03/01/2010",  "", "The best transaction", "$20.00", "Edit", "Delete"]
     ]
   end
 end
