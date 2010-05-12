@@ -1,3 +1,9 @@
-require File.expand_path("../../lib/settings", __FILE__)
-MongoMapper.connection = Mongo::Connection.new('localhost', nil, :logger => Padrino.logger)
-MongoMapper.database = Padrino::Application.settings['database']
+require 'database_preparation'
+
+class Padrino::Application
+  extend DatabasePreparation
+  extend DatabasePreparation::WebFrameworks::Padrino
+  extend DatabasePreparation::DatabaseAdapters::Mongoid
+  
+  establish_database
+end
