@@ -123,7 +123,7 @@ module Spec::DSL::Main
   alias_method :feature, :describe
 end
 
-class AcceptanceExampleGroup < Spec::Example::ExampleGroup
+class IntegrationExampleGroup < Spec::Example::ExampleGroup
   include Capybara
   include Cucumber::Tableish
   
@@ -150,7 +150,7 @@ class AcceptanceExampleGroup < Spec::Example::ExampleGroup
     end
     
     def under_javascript(&block)
-      run_javascript_tests = File.exists?("tmp/acceptance_spec.opts") && !!YAML.load_file("tmp/acceptance_spec.opts")[:javascript]
+      run_javascript_tests = File.exists?("tmp/integration_spec.opts") && !!YAML.load_file("tmp/integration_spec.opts")[:javascript]
       return unless run_javascript_tests
       describe "(under Javascript)" do
         # Copied from Capybara's Cucumber mixin
@@ -177,7 +177,7 @@ class AcceptanceExampleGroup < Spec::Example::ExampleGroup
     super
   end
   
-  Spec::Example::ExampleGroupFactory.register(:acceptance, self)
+  Spec::Example::ExampleGroupFactory.register(:integration, self)
 end
 
 Spec::Runner.configure do |config|
