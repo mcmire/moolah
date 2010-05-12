@@ -40,27 +40,25 @@ Moolah.controller :import_rules do
     render 'import_rules/delete'
   end
   restful :destroy do
-    # BUG: Can't use ImportRule.destroy(params[:id]) here for some reason
-    ImportRule.find(params[:id]).destroy
+    rule = ImportRule.find(params[:id])
+    rule.destroy
     flash[:success] = "Import rule was successfully deleted."
     redirect url(:import_rules, :index)
   end
   
   delete :destroy_multiple do
-    # BUG: MongoMapper's find method doesn't seem to autoconvert an array of id strings (but it does auto-convert a single id)
-    ids = Array(params[:to_delete]).map {|id| Mongo::ObjectID.from_string(id) }
-    import_rules = ImportRule.find(ids)
+    ids = Array(params[:to_delete])
+    import_rules = ImportRule.criteria.in(:_id => ids)
     import_rules.each(&:destroy)
-    flash[:success] = format_message(import_rules.size, "import rule", "successfully deleted.")
+    flash[:success] = format_message(ids.size, "import rule", "successfully deleted.")
     redirect url(:import_rules, :index)
   end
   
   post :dispatch do
     if params[:delete_checked]
       if params[:to_delete].present?
-        # BUG: MongoMapper's find method doesn't seem to autoconvert an array of id strings (but it does auto-convert a single id)
-        @ids = Array(params[:to_delete]).map {|id| Mongo::ObjectID.from_string(id) }
-        @import_rules = ImportRule.find(@ids)
+        @ids = Array(params[:to_delete])
+        @import_rules = ImportRule.criteria.in(:_id => @ids)
         render "/import_rules/delete_multiple"
       else
         flash[:notice] = "You didn't select any import rules to delete."

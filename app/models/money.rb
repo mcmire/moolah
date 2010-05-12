@@ -1,10 +1,10 @@
 class Money
-  def self.from_mongo(value)
+  def self.get(value)
     Money === value ? value : Money.new(value)
   end
   
-  def self.to_mongo(value)
-    from_mongo(value).amount
+  def self.set(value)
+    get(value).amount
   end
   
   attr_reader :value, :type, :amount
@@ -36,6 +36,13 @@ class Money
   def value_as_currency
     return unless value
     (@type == "debit" ? "-" : "") + "$" + value
+  end
+  
+  # Provide basic arithmetic
+  %w(+ - * /).each do |method|
+    define_method(method) do |value|
+      @amount.send(method, value)
+    end
   end
   
   def ==(other)

@@ -35,3 +35,14 @@ class Date
     at_beginning_of_week + 6
   end
 end
+
+# Regexp support is not present in Mongoid,
+# even though it is supported in Mongo Ruby driver?!?
+class Regexp
+  def self.get(value)
+    value
+  end
+  def self.set(value)
+    value
+  end
+end

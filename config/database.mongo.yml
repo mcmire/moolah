@@ -1,0 +1,18 @@
+defaults: &defaults
+  host: localhost
+
+development:
+  <<: *defaults
+  database: moolah
+  
+production:
+  <<: *defaults
+  database: moolah
+  
+test:
+  <<: *defaults
+  database: moolah_test
+  
+integration:
+  <<: *defaults
+  database: moolah_integration

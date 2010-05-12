@@ -1,7 +1,7 @@
 Moolah.controller :categories do
   
   restful :index do
-    @categories = Category.all(:order => "name")
+    @categories = Category.order_by([:name, :asc])
     render 'categories/index'
   end
   
@@ -40,27 +40,25 @@ Moolah.controller :categories do
     render 'categories/delete'
   end
   restful :destroy do
-    # BUG: Can't use Category.destroy(params[:id]) here for some reason
-    Category.find(params[:id]).destroy
+    category = Category.find(params[:id])
+    category.destroy
     flash[:success] = "Category was successfully deleted."
     redirect url(:categories, :index)
   end
   
   delete :destroy_multiple do
-    # BUG: MongoMapper's find method doesn't seem to autoconvert an array of id strings (but it does auto-convert a single id)
-    ids = Array(params[:to_delete]).map {|id| Mongo::ObjectID.from_string(id) }
-    categories = Category.find(ids)
+    ids = Array(params[:to_delete])
+    categories = Category.criteria.in(:_id => ids)
     categories.each(&:destroy)
-    flash[:success] = format_message(categories.size, "category", "successfully deleted.")
+    flash[:success] = format_message(ids.size, "category", "successfully deleted.")
     redirect url(:categories, :index)
   end
   
   post :dispatch do
     if params[:delete_checked]
       if params[:to_delete].present?
-        # BUG: MongoMapper's find method doesn't seem to autoconvert an array of id strings (but it does auto-convert a single id)
-        @ids = Array(params[:to_delete]).map {|id| Mongo::ObjectID.from_string(id) }
-        @categories = Category.find(@ids)
+        @ids = Array(params[:to_delete])
+        @categories = Category.criteria.in(:_id => @ids)
         render "/categories/delete_multiple"
       else
         flash[:notice] = "You didn't select any categories to delete."

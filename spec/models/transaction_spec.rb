@@ -9,7 +9,7 @@ describe Transaction do
     it "fails if the amount is 0" do
       @txn.amount = 0
       @txn.save
-      Array(@txn.errors.on(:amount)).should include("cannot be zero")
+      @txn.errors[:amount].should include("cannot be zero")
     end
   end
   

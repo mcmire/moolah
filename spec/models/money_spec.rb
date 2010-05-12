@@ -1,25 +1,25 @@
 require File.expand_path(File.dirname(__FILE__) + "/spec_helper")
 
 describe Money do
-  describe '.from_mongo' do
+  describe '.get' do
     it "feeds the given value straight to Money.new" do
-      Money.from_mongo(-2354).should == Money.new(-2354)
-      Money.from_mongo("value" => "23.54", "type" => "debit").should == Money.new(-2354)
+      Money.get(-2354).should == Money.new(-2354)
+      Money.get("value" => "23.54", "type" => "debit").should == Money.new(-2354)
     end
     it "returns the given value if it's already a Money object" do
-      Money.from_mongo(Money.new(-2354)).should == Money.new(-2354)
+      Money.get(Money.new(-2354)).should == Money.new(-2354)
     end
   end
   
-  describe '.to_mongo' do
+  describe '.set' do
     it "simply returns the integer amount stored inside the Money object" do
-      Money.to_mongo(Money.new(-2354)).should == -2354
+      Money.set(Money.new(-2354)).should == -2354
     end
     it "returns the given value if it's already an integer" do
-      Money.to_mongo(-2354).should == -2354
+      Money.set(-2354).should == -2354
     end
     it "also accepts a hash which it pipes straight through Money.new" do
-      Money.to_mongo(:value => "23.54", :type => "debit").should == -2354
+      Money.set(:value => "23.54", :type => "debit").should == -2354
     end
   end
   
@@ -100,6 +100,30 @@ describe Money do
     end
     it "returns nothing if no value stored" do
       Money.new(nil).value_as_currency.should == nil
+    end
+  end
+  
+  describe '#+' do
+    it "works" do
+      (Money.new(500) + 10).should == 510
+    end
+  end
+  
+  describe '#-' do
+    it "works" do
+      (Money.new(500) - 10).should == 490
+    end
+  end
+  
+  describe '#*' do
+    it "works" do
+      (Money.new(500) * 10).should == 5000
+    end
+  end
+  
+  describe '#/' do
+    it "works" do
+      (Money.new(500) / 10).should == 50
     end
   end
   

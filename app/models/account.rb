@@ -1,12 +1,15 @@
 class Account
-  include MongoMapper::Document
+  include Mongoid::Document
   
-  key :name, String, :required => true
-  key :webkey, String, :required => true
+  field :name, :type => String
+  field :webkey, :type => String
   
-  many :transactions
+  validates_presence_of :name
+  #validates_presence_of :webkey
   
-  before_validation :set_webkey_from_name, :unless => :webkey?
+  has_many_related :transactions
+  
+  before_validate :set_webkey_from_name, :unless => :webkey?
   
   def set_webkey_from_name
     self.webkey = name.downcase

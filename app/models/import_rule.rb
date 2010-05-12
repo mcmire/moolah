@@ -1,13 +1,12 @@
 class ImportRule
-  include MongoMapper::Document
+  include Mongoid::Document
   
-  key :pattern, Regexp, :required => true
-  key :account_id, ObjectId
-  key :category_id, ObjectId
-  key :description, String
+  field :pattern, :type => Regexp
+  belongs_to_related :account
+  belongs_to_related :category
+  field :description, :type => String
   
-  belongs_to :account
-  belongs_to :category
+  validates_presence_of :pattern
   
   alias_method :set_pattern, :pattern=
   # BUG: MongoMapper doesn't do this by default??
@@ -17,7 +16,7 @@ class ImportRule
   end
   
   def apply_to_all_transactions!
-    txns = Transaction.all(:original_description => pattern)
+    txns = Transaction.where(:original_description => pattern)
     txns.each {|txn| txn.apply_import_rule!(self) }
   end
 end

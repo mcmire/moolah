@@ -1,30 +1,31 @@
 require 'digest/sha1'
 require 'money'
+require 'csv'
 
 class Transaction
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
   
-  key :sha1, String#, :required => true
+  field :sha1, :type => String
   #key :parent_id, Integer
-  key :account_id, ObjectId#, :required => true # checking, savings
-  key :transaction_type_id, Integer  # cc, atm, etc.
-  key :category_id, ObjectId # gas, rent, etc.
-  key :check_number, Integer
-  key :amount, Money, :required => true
-  key :original_description, String
-  key :description, String, :required => true
-  key :settled_on, Date, :required => true
-  timestamps!
+  belongs_to_related :account # checking, savings
+  belongs_to_related :transaction_type # cc, atm, etc.
+  belongs_to_related :category # gas, rent, etc.
+  field :check_number, :type => Integer
+  field :amount, :type => Money
+  field :original_description, :type => String
+  field :description, :type => String
+  field :settled_on, :type => Date
   
-  belongs_to :account
-  belongs_to :transaction_type
-  belongs_to :category
-  
-  before_validation_on_create :store_sha1
-  before_validation_on_create :set_description_from_original_description, :unless => :description?
-  after_save :create_and_apply_import_rule!, :if => :creating_import_rule?
-  
+  #validates_presence_of :sha1  # should be here?
+  validates_presence_of :amount
+  #validates_presence_of :description
+  validates_presence_of :settled_on
   validate :amount_must_not_be_zero
+  
+  before_validate :store_sha1, :on => :create
+  before_validate :set_description_from_original_description, :unless => :description?, :on => :create
+  after_save :create_and_apply_import_rule!, :if => :creating_import_rule?
   
   def creating_import_rule?
     @creating_import_rule
@@ -50,7 +51,7 @@ class Transaction
   # Like through the Ruby driver?
   def self.import!(file, account)
     # accepts a String or IO object
-    csv = FasterCSV.new(file)
+    csv = CSV.new(file)
     rows = csv.read
     num_txns_saved = 0
     rows.each_with_index do |row, i|
@@ -74,21 +75,21 @@ class Transaction
       # TODO: Make this automatic
       txn.sha1 = txn.calculate_sha1
       # Don't add the transaction if it's already been added
-      unless Transaction.exists?(:sha1 => txn.sha1)
+      if Transaction.where(:sha1 => txn.sha1).count == 0
         txn.save!
         num_txns_saved += 1
       end
     end
     num_txns_saved
   ensure
-    csv.close
+    csv.close if csv
   end
   
   def import_rule
     return if original_description.nil?
     @import_rule ||= begin
       desc = Regexp.escape(original_description)
-      ImportRule.first("$where" => "this.pattern.test(\"#{desc}\")")
+      ImportRule.where("this.pattern.test(\"#{desc}\")").first
     end
   end
   def import_rule?

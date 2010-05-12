@@ -146,7 +146,7 @@ class Transaction
       end
     
       def get_transactions(options={})
-        Transaction.all({:order => "settled_on"}.merge(options))
+        Transaction.order_by([:settled_on, :asc]).where(options)
       end
       
       # If multiple transactions occur on the same day, squash them into one data point.

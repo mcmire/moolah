@@ -1,3 +1,5 @@
+require 'pp'
+
 class Moolah < Padrino::Application
   configure do
     ##
@@ -35,9 +37,7 @@ class Moolah < Padrino::Application
     # (You can handle all Padrino applications using `Padrino.application` instead.)
     use Rack::Session::Cookie
   end
-
-  require 'pp'
   
-  Padrino::Logger::Config[:test] = { :log_level => :debug, :stream => :to_file }
-  Padrino::Logger.setup!
+  #Padrino::Logger::Config[:test] = { :log_level => :debug, :stream => :to_file }
+  #Padrino::Logger.setup!
 end
