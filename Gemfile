@@ -2,7 +2,7 @@ source :gemcutter
 
 # Project requirements
 gem 'rack-flash'
-gem 'fastercsv'
+#gem 'fastercsv'
 
 # Component requirements
 gem 'haml', ">= 3.0.0.rc" #">= 2.2.0"

@@ -2,6 +2,8 @@
 #puts caller
 #puts
 
+raise "Moolah requires Ruby 1.9" unless RUBY_VERSION >= "1.9.0"
+
 # Defines our constants
 PADRINO_ENV  = ENV["PADRINO_ENV"] ||= ENV["RACK_ENV"] ||= "development" unless defined?(PADRINO_ENV)
 PADRINO_ROOT = File.expand_path(File.dirname(__FILE__) + '/..') unless defined? PADRINO_ROOT
