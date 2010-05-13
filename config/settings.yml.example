@@ -3,12 +3,12 @@ common: &common
   
 development:
   <<: *common
-  database: app
   
 production:
   <<: *common
-  database: app
   
 test:
   <<: *common
-  database: app_test
+  
+integratino:
+  <<: *common

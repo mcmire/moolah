@@ -120,13 +120,13 @@ feature "Deleting transactions" do
     body.should =~ /You didn't select any transactions to delete/
   end
   
-  under_javascript do
+  javascript do
     scenario "Deleting one transaction" do
       trans1 = Factory(:transaction, :original_description => "Transaction 1")
       trans2 = Factory(:transaction, :original_description => "Transaction 2")
       
       visit "/"
-      browser.confirm(true) do
+      accepting_confirm_boxes do
         within("#transaction_#{trans1.id}") do
           click "Delete"
         end
@@ -143,7 +143,7 @@ feature "Deleting transactions" do
       visit "/"
       
       click "Checking"
-      browser.confirm(true) do
+      accepting_confirm_boxes do
         within("#transaction_#{trans1.id}") do
           click "Delete"
         end
@@ -161,7 +161,7 @@ feature "Deleting transactions" do
     #  visit "/"
     #  check "to_delete_#{trans1.id}"
     #  check "to_delete_#{trans2.id}"
-    #  browser.confirm(true) do
+    #  accepting_confirm_boxes do
     #    within('#form') do
     #      click_button "Delete checked"
     #    end
@@ -180,7 +180,7 @@ feature "Deleting transactions" do
     #  click "Checking"
     #  check "to_delete_#{trans1.id}"
     #  check "to_delete_#{trans2.id}"
-    #  browser.confirm(true) do
+    #  accepting_confirm_boxes do
     #    within('#form') do
     #      click_button "Delete checked"
     #    end

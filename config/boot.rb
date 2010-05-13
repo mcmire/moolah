@@ -2,7 +2,7 @@
 #puts caller
 #puts
 
-raise "Moolah requires Ruby 1.9" unless RUBY_VERSION >= "1.9.0"
+raise "Moolah requires Ruby 1.8.7" unless RUBY_VERSION == "1.8.7"
 
 # Defines our constants
 PADRINO_ENV  = ENV["PADRINO_ENV"] ||= ENV["RACK_ENV"] ||= "development" unless defined?(PADRINO_ENV)

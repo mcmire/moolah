@@ -1,31 +1,31 @@
 TODO
 
-X Javascript confirmation on multiple and single delete, with fallback (a little jQuery plugin)
-X Tabs for checking and savings account
-X Ability to edit description, category, and other details of a transaction
-X Ability to add a transaction manually
-X Destroy multiple is broken?
-* Graphs (using jqplot)
-  - overall balance
-  - monthly and biweekly income
-  - monthly and biweekly expenses (by category)
-  - monthly and biweekly net worth
-  - monthly and biweekly income rate (with avg line)
-X Auto-assignment of category, transaction type, and description upon import
-X Add category management
-X Add import rule management
-X Test last_view on transactions
-X Flesh out the integration specs
-
-* Switch to Mongoid
-* Switch to Ruby 1.9 (enforce too?)
-* Make integration stuff into a gem and require that instead (and convert over to spec/integration)
-* Paginate the transaction list
-* Fix javascript delete multiple actions
-* Get graphs working again
-* CSSify this biatch (reset stylesheet, vertical rhythm, etc.)
-
-* Add account management
-* Javascript add/edit (click on a line to edit, click out to cancel)
-* Upon import, show a line in between current import and existing data (so we know what we've imported)
-* Sort by column in transactions list
+ ✔ Javascript confirmation on multiple and single delete, with fallback (a little jQuery plugin)
+ ✔ Tabs for checking and savings account
+ ✔ Ability to edit description, category, and other details of a transaction
+ ✔ Ability to add a transaction manually
+ ✔ Destroy multiple is broken?
+ * Graphs (using jqplot)
+   - overall balance
+   - monthly and biweekly income
+   - monthly and biweekly expenses (by category)
+   - monthly and biweekly net worth
+   - monthly and biweekly income rate (with avg line)
+ ✔ Auto-assignment of category, transaction type, and description upon import
+ ✔ Add category management
+ ✔ Add import rule management
+ ✔ Test last_view on transactions
+ ✔ Flesh out the integration specs
+ 
+ ✔ Switch to Mongoid
+ ✘ Switch to Ruby 1.9 (enforce too?)
+ * Make integration stuff into a gem and require that instead (and convert over to spec/integration)
+ * Paginate the transaction list
+ * Fix javascript delete multiple actions
+ * Get graphs working again
+ * CSSify this biatch (reset stylesheet, vertical rhythm, etc.)
+ 
+ * Add account management
+ * Javascript add/edit (click on a line to edit, click out to cancel)
+ * Upon import, show a line in between current import and existing data (so we know what we've imported)
+ * Sort by column in transactions list

@@ -49,14 +49,14 @@ feature "Deleting categories" do
     body.should =~ /You didn't select any categories to delete/
   end
   
-  under_javascript do
+  javascript do
     scenario "Deleting one category" do
       category1 = Factory(:category, :name => "Category 1")
       category2 = Factory(:category, :name => "Category 2")
       visit "/"
       
       click "Categories"
-      browser.confirm(true) do
+      accepting_confirm_boxes do
         within("#category_#{category1.id}") do
           click "Delete"
         end
@@ -75,7 +75,7 @@ feature "Deleting categories" do
     #  click "Categories"
     #  check "to_delete_#{category1.id}"
     #  check "to_delete_#{category2.id}"
-    #  browser.confirm(true) do
+    #  accepting_confirm_boxes do
     #    within('#form') do
     #      click_button "Delete checked"
     #    end

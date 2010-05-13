@@ -60,7 +60,7 @@ module DatabasePreparation
       end
       
       def current_environment
-        PADRINO_ENV
+        ::Padrino.env.to_s
       end
       
       def logger

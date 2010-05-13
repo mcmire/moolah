@@ -49,14 +49,14 @@ feature "Deleting import_rules" do
     body.should =~ /You didn't select any import rules to delete/
   end
   
-  under_javascript do
+  javascript do
     scenario "Deleting one import rule" do
       import_rule1 = Factory(:import_rule, :pattern => "Import rule 1")
       import_rule2 = Factory(:import_rule, :pattern => "Import rule 2")
       visit "/"
       
       click "Import Rules"
-      browser.confirm(true) do
+      accepting_confirm_boxes do
         within("#import_rule_#{import_rule1.id}") do
           click "Delete"
         end
@@ -75,7 +75,7 @@ feature "Deleting import_rules" do
     #  click "Import Rules"
     #  check "to_delete_#{import_rule1.id}"
     #  check "to_delete_#{import_rule2.id}"
-    #  browser.confirm(true) do
+    #  accepting_confirm_boxes do
     #    within('#form') do
     #      click_button "Delete checked"
     #    end

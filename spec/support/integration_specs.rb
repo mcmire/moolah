@@ -1,15 +1,20 @@
-require 'capybara/dsl'
+if defined?(Rails)
+  require 'capybara/rails'
+else
+  require 'capybara/dsl'
+end
+require 'capybara/envjs'
 
 Capybara.app = Moolah.new
-Capybara.app_host = "http://localhost:5151"
-Capybara.javascript_driver = :culerity
+#Capybara.app_host = "http://localhost:5151"
+Capybara.javascript_driver = :envjs
 Capybara.run_server = false
 Capybara.default_selector = :css
 Capybara.debug = true
 
 module Capybara
   class Server
-    # Added: extracted from #is_port_open? so that the Celerity driver can access it
+    # Extracted from #is_port_open? so that the Celerity driver can access it
     def self.reachable?(host, port)
       Timeout::timeout(1) do
         begin
@@ -24,7 +29,7 @@ module Capybara
       return false
     end
     
-    # Patched: Extracted to .is_port_open?
+    # PATCH: Extracted to .is_port_open?
     def is_port_open?(tested_port)
       self.class.reachable?(host, tested_port)
     end
@@ -32,7 +37,7 @@ module Capybara
   
   module Driver
     class Celerity
-      # Patched: Check that the app_host is reachable, if that specified
+      # PATCH: Check that the app_host is reachable, if that specified
       def initialize(app)
         @app = app
         @rack_server = Capybara::Server.new(@app)
@@ -47,22 +52,42 @@ module Capybara
           # so don't worry about checking that
         end
       end
-  
-      # Patched: Use firefox3 instead of firefox, make sure ajax is synchronized
+    end
+    
+    class Culerity
+      # Use firefox3 instead of firefox and make sure ajax is synchronized
       def browser
         unless @_browser
           @_browser = ::Culerity::RemoteBrowserProxy.new self.class.server, {:browser => :firefox3, :log_level => :fine, :javascript_exceptions => true, :resynchronize => true}
           at_exit do
-            @_browser.exit
+            @_browser.exit if @_browser
           end
         end
         @_browser
+      end
+      
+      def clear_browser
+        @_browser.exit if @_browser
       end
     end
   end
   
   module SaveAndOpenPage
+    def self.save_and_open_page(html)
+      # PATCH: Put the file in a temp directory so we don't pollute our working directory
+      name="#{Dir.tmpdir}/capybara-#{Time.new.strftime("%Y%m%d%H%M%S")}.html"
+  
+      FileUtils.touch(name) unless File.exist?(name)
+  
+      tempfile = File.new(name,'w')
+      tempfile.write(rewrite_css_and_image_references(html))
+      tempfile.close
+  
+      open_in_browser(tempfile.path)
+    end
+
     def self.open_in_browser(path)
+      # Use Chrome if that's open, otherwise use whichever browser Launchy picks
       if `ps aux | grep 'Google Chrome' | grep -v 'grep Google Chrome'`.blank?
         begin
           require "launchy"
@@ -120,54 +145,41 @@ end
 # [4]: http://github.com/citrusbyte/stories
 
 module Spec::DSL::Main
-  alias_method :feature, :describe
+  def feature(description, &block)
+    # the caller here is essential or else the --line option to `spec` doesn't work
+    describe("Feature: #{description}", :type => :integration, :location => caller(0)[1], &block)
+  end
 end
 
-class IntegrationExampleGroup < Spec::Example::ExampleGroup
-  include Capybara
-  include Cucumber::Tableish
-  
-  after do
-    # Reset sessions so that things like session[:whatever] do not carry over into other tests
-    Capybara.reset_sessions!
-  end
-
-  module JavascriptExampleMethods
-    def browser
-      page.driver.browser
-    end
-  end
-
-  class << self
-    def scenario(description, &block)
-      it("Scenario: #{description}", &block)
-    end
-  
-    def story(description)
-      description = description.strip.split(/[ \t]*\n+[ \t]*/).map {|line| "  #{line}\n" }.join
-      #@feature_description = description
-      @description_args.push("\n#{description}\n")
-    end
-    
-    def under_javascript(&block)
-      run_javascript_tests = File.exists?("tmp/integration_spec.opts") && !!YAML.load_file("tmp/integration_spec.opts")[:javascript]
-      return unless run_javascript_tests
-      describe "(under Javascript)" do
-        # Copied from Capybara's Cucumber mixin
-        before do
-          Capybara.current_driver = Capybara.javascript_driver
-        end
-        after do
-          Capybara.use_default_driver
-        end
-        include JavascriptExampleMethods
-        instance_eval(&block)
-      end
-    end
-  end
-  
+module IntegrationExampleMethods
   def current_path
-    URI.parse(current_url).path
+    uri = URI.parse(current_url)
+    path = uri.path
+    path += "?" + uri.query if uri.query
+    path
+  end
+  
+  #def html
+  #  page.driver.html
+  #end
+  
+  def body_as_text
+    page.driver.html.text
+  end
+  
+  # Override wait_until so that instead of waiting for the specified amount of time
+  # and then failing if the block fails, retries the block every 0.5 for the
+  # specified amount of time. This made more sense to me.
+  def wait_until(timeout=10, &block)
+    time = Time.now
+    success = false
+    until success
+      if (Time.now - time) >= timeout
+        raise "Waited for #{timeout} seconds, but block never returned true"
+      end
+      sleep 0.5
+      success = yield
+    end
   end
 
   # Copied from Steak
@@ -176,10 +188,147 @@ class IntegrationExampleGroup < Spec::Example::ExampleGroup
     return Spec::Matchers::Has.new(sym, *args) if sym.to_s =~ /^have_/
     super
   end
-  
-  Spec::Example::ExampleGroupFactory.register(:integration, self)
 end
 
-Spec::Runner.configure do |config|
-  config.ignore_backtrace_patterns /capybara/
+module IntegrationExampleGroupMethods
+  module JavascriptExampleMethods
+    def browser
+      page.driver.browser
+    end
+    
+    def body_as_text
+      browser.document.as_text
+    end
+    
+    #def html
+    #  @html ||= Nokogiri::HTML(body)
+    #end
+    
+    # Override this to use Celerity's wait_until since Capybara doesn't seem to do this already
+    def wait_until(timeout, &block)
+      browser.wait_until(timeout, &block)
+    end
+    
+    def accepting_confirm_boxes(&block)
+      page.evaluate_script('window.__oldConfirm = window.confirm; window.confirm = function() { return true; }')
+      yield
+      page.evaluate_script('window.confirm = window.__oldConfirm')
+    end
+    
+    def rejecting_confirm_boxes
+      page.evaluate_script('window.__oldConfirm = window.confirm; window.confirm = function() { return false; }')
+      yield
+      page.evaluate_script('window.confirm = window.__oldConfirm')
+    end
+  end
+  
+  def self.extended(extender)
+    extender.after do
+      # Reset sessions so that things like session[:whatever] do not carry over into other tests
+      Capybara.reset_sessions!
+    end
+  end
+  
+  def background(&block)
+    before(:each, &block)
+  end
+  
+  def scenario(description, location=nil, &block)
+    # the caller here is essential or else the --line option to `spec` doesn't work
+    it("Scenario: #{description}", {}, (location || caller(0)[1]), &block)
+  end
+  
+  def xscenario(description)
+    xit("Scenario: #{description}")
+  end
+  
+  def broken_scenario(description, reason="Scenario needs to be fixed", location=nil, &block)
+    # the caller here is essential or else the --line option to `spec` doesn't work
+    it("Scenario: #{description}", {}, (location || caller(0)[1])) do
+      pending(reason) { yield }
+    end
+  end
+  
+  def pending_scenario(description, reason="Not Yet Implemented", location=nil, &block)
+    # the caller here is essential or else the --line option to `spec` doesn't work
+    it("Scenario: #{description}", {}, (location || caller(0)[1])) do
+      pending(reason)
+      yield
+    end
+  end
+
+  # TODO: Any way to NOT add the story part to the description?
+  # Maybe we need a custom formatter
+  def story(description)
+    description = description.strip.split(/[ \t]*\n+[ \t]*/).map {|line| "  #{line}\n" }.join
+    @description_args.push("\n#{description}\n")
+  end
+  
+  def javascript(&block)
+    run_javascript_tests = File.exists?("tmp/integration_spec.opts") && !!YAML.load_file("tmp/integration_spec.opts")[:javascript]
+    return unless run_javascript_tests
+    describe "(under Javascript)" do
+      # Copied from Capybara's Cucumber mixin
+      before :all do
+        Capybara.current_driver = Capybara.javascript_driver
+=begin
+        @_old_env = PADRINO_ENV
+        env = "integration"
+        silence_warnings do
+          # TODO: Need to agnosticize this
+          Padrino.send(:instance_variable_set, "@_env", nil)
+          Object.const_set(:PADRINO_ENV, env)
+          Padrino.env # initialize environment
+          Moolah.establish_database(env)
+        end
+        #@_use_transactional_fixtures = self.class.use_transactional_fixtures
+        #self.class.use_transactional_fixtures = false
+=end
+      end
+      
+      # Basically what we're doing here is telling RSpec to truncate/seed the database
+      # BEFORE any before(:each) blocks in the superclass are executed
+      #proc = Proc.new {
+      #  Moolah.plow_database(:all => true, :level => :info)
+      #  Moolah.seed_database(:level => :info)
+      #}
+      #example_group_hierarchy.before_each_parts.unshift(proc)
+      
+      after :all do
+        #page.driver.clear_browser
+        Capybara.use_default_driver
+=begin
+        env = @_old_env
+        silence_warnings do
+          # TODO: Need to agnosticize this
+          Padrino.send(:instance_variable_set, "@_env", nil)
+          Object.const_set(:PADRINO_ENV, env)
+          Padrino.env # initialize environment
+          Moolah.establish_database(env)
+        end
+        #self.class.use_transactional_fixtures = @_use_transactional_fixtures
+=end
+      end
+      include JavascriptExampleMethods
+      instance_eval(&block)
+    end
+  end
 end
+
+if defined?(Spec::Rails)
+  # Rails-based apps
+  class IntegrationExampleGroup < Spec::Rails::Example::IntegrationExampleGroup
+    include ActionController::RecordIdentifier
+  end
+else
+  # Rack-based apps (Sinatra, Padrino, etc.)
+  class IntegrationExampleGroup < Spec::Example::ExampleGroup
+  end
+end
+IntegrationExampleGroup.class_eval do
+  include Capybara
+  include Cucumber::Tableish  
+  include IntegrationExampleMethods
+  extend IntegrationExampleGroupMethods
+end
+Spec::Example::ExampleGroupFactory.register(:integration, IntegrationExampleGroup)

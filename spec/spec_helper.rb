@@ -2,6 +2,8 @@
 #puts caller
 #puts
 
+raise "Moolah is not compatible with Ruby 1.9.x yet (at least to run the tests)" if RUBY_VERSION >= "1.9.0"
+
 require 'rubygems'
 #require 'spork'
 $:.unshift "/Users/elliot/code/github/forks/spork/lib"
@@ -15,7 +17,7 @@ Spork.prefork do
   # UGH... fag
   #Object.const_set(:I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2, true)
   
-  Object.const_set(:PADRINO_ENV, 'test')# unless defined?(PADRINO_ENV)
+  Object.const_set(:PADRINO_ENV, 'test') unless defined?(PADRINO_ENV)
   require File.expand_path(File.dirname(__FILE__) + "/../config/boot")
   require 'spec/autorun'
   #require 'spec/rails'

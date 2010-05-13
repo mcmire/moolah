@@ -1,6 +1,5 @@
 require 'digest/sha1'
 require 'money'
-require 'csv'
 
 class Transaction
   include Mongoid::Document
@@ -51,7 +50,7 @@ class Transaction
   # Like through the Ruby driver?
   def self.import!(file, account)
     # accepts a String or IO object
-    csv = CSV.new(file)
+    csv = FasterCSV.new(file)
     rows = csv.read
     num_txns_saved = 0
     rows.each_with_index do |row, i|
