@@ -27,6 +27,6 @@ end
 # Padrino
 gem 'thin' # or mongrel
 #gem 'padrino', "0.9.7"
-gem 'padrino-core', "0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-core"
-gem 'padrino-helpers', "0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-helpers"
-gem 'padrino-gen', "0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-gen"
+gem 'padrino-core', ">= 0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-core"
+gem 'padrino-helpers', ">= 0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-helpers"
+gem 'padrino-gen', ">= 0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-gen"
