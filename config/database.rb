@@ -1,3 +1,5 @@
+require "#{Padrino.root}/config/integration_logger"
+# lib/ is loaded after config/database.rb, that's why we need this
 require 'database_preparation'
 
 class Padrino::Application
