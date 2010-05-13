@@ -9,13 +9,13 @@ require 'spec/rake/spectask'
 #end
 
 namespace :spec do
-  [:models, :acceptance].each do |sub|
+  [:models, :integration].each do |sub|
     desc "Run the code examples in spec/#{sub}"
     Spec::Rake::SpecTask.new(sub) do |t|
       t.spec_opts = ['--options', "spec/spec.opts"]
       t.spec_opts += ['--example', ENV["EXAMPLE"]] if ENV["EXAMPLE"]
       t.spec_opts += ['--line', ENV["LINE"]] if ENV["LINE"]
-      if sub == :acceptance
+      if sub == :integration
         t.spec_opts += ['--format', 'nested']
         # Since any environment variables executed along with 'rake spec' are not
         # propagated to the specs themselves, store the options in a file which
@@ -26,7 +26,7 @@ namespace :spec do
         FileUtils.mkdir_p("tmp")
         options = {}
         options[:javascript] = (ENV["JS"] == "1")
-        File.open("tmp/acceptance_spec.opts", "w") {|f| YAML.dump(options, f) }
+        File.open("tmp/integration_spec.opts", "w") {|f| YAML.dump(options, f) }
       else
         t.spec_opts += ['--format', 'specdoc']
       end
