@@ -8,70 +8,12 @@ require 'capybara/envjs'
 Capybara.app = Moolah.new
 #Capybara.app_host = "http://localhost:5151"
 Capybara.javascript_driver = :envjs
+#Capybara.default_driver = :rack_test
 Capybara.run_server = false
 Capybara.default_selector = :css
 Capybara.debug = true
 
 module Capybara
-  class Server
-    # Extracted from #is_port_open? so that the Celerity driver can access it
-    def self.reachable?(host, port)
-      Timeout::timeout(1) do
-        begin
-          s = TCPSocket.new(host, port)
-          s.close
-          return true
-        rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
-          return false
-        end
-      end
-    rescue Timeout::Error
-      return false
-    end
-    
-    # PATCH: Extracted to .is_port_open?
-    def is_port_open?(tested_port)
-      self.class.reachable?(host, tested_port)
-    end
-  end
-  
-  module Driver
-    class Celerity
-      # PATCH: Check that the app_host is reachable, if that specified
-      def initialize(app)
-        @app = app
-        @rack_server = Capybara::Server.new(@app)
-        if Capybara.run_server
-          @rack_server.boot
-        elsif Capybara.app_host
-          host, port = Capybara.app_host.split("//")[1].split(":")
-          msg = "It doesn't look like your app at #{Capybara.app_host} is reachable. Should you have started it beforehand?"
-          Capybara::Server.reachable?(host, port) or raise(msg)
-        else
-          # we know by this point the rack server is up
-          # so don't worry about checking that
-        end
-      end
-    end
-    
-    class Culerity
-      # Use firefox3 instead of firefox and make sure ajax is synchronized
-      def browser
-        unless @_browser
-          @_browser = ::Culerity::RemoteBrowserProxy.new self.class.server, {:browser => :firefox3, :log_level => :fine, :javascript_exceptions => true, :resynchronize => true}
-          at_exit do
-            @_browser.exit if @_browser
-          end
-        end
-        @_browser
-      end
-      
-      def clear_browser
-        @_browser.exit if @_browser
-      end
-    end
-  end
-  
   module SaveAndOpenPage
     def self.save_and_open_page(html)
       # PATCH: Put the file in a temp directory so we don't pollute our working directory
@@ -151,6 +93,32 @@ module Spec::DSL::Main
   end
 end
 
+module ExampleGroupHierarchyExtensions
+  def nested_descriptions_with_stories
+    @nested_descriptions_with_stories ||= collect {|group|
+      nd = nested_description_from(group)
+      (nd == "") ? nil : [nd, group.respond_to?(:story) ? group.story : nil]
+    }.compact
+  end
+end
+Spec::Example::ExampleGroupHierarchy.send(:include, ExampleGroupHierarchyExtensions)
+
+Spec::Example::ExampleGroupProxy.class_eval do
+  def initialize_with_stories(example_group)
+    initialize_without_stories(example_group)
+    @nested_descriptions_with_stories = example_group.nested_descriptions_with_stories
+  end
+  alias_method_chain :initialize, :stories
+  attr_reader :nested_descriptions_with_stories
+end
+
+module ExampleGroupExtensions
+  def nested_descriptions_with_stories
+    example_group_hierarchy.nested_descriptions_with_stories
+  end
+end
+Spec::Example::ExampleGroup.extend(ExampleGroupExtensions)
+
 module IntegrationExampleMethods
   def current_path
     uri = URI.parse(current_url)
@@ -190,38 +158,39 @@ module IntegrationExampleMethods
   end
 end
 
-module IntegrationExampleGroupMethods
-  module JavascriptExampleMethods
-    def browser
-      page.driver.browser
-    end
-    
-    def body_as_text
-      browser.document.as_text
-    end
-    
-    #def html
-    #  @html ||= Nokogiri::HTML(body)
-    #end
-    
-    # Override this to use Celerity's wait_until since Capybara doesn't seem to do this already
-    def wait_until(timeout, &block)
-      browser.wait_until(timeout, &block)
-    end
-    
-    def accepting_confirm_boxes(&block)
-      page.evaluate_script('window.__oldConfirm = window.confirm; window.confirm = function() { return true; }')
-      yield
-      page.evaluate_script('window.confirm = window.__oldConfirm')
-    end
-    
-    def rejecting_confirm_boxes
-      page.evaluate_script('window.__oldConfirm = window.confirm; window.confirm = function() { return false; }')
-      yield
-      page.evaluate_script('window.confirm = window.__oldConfirm')
-    end
+module JavascriptExampleMethods
+  def browser
+    page.driver.browser
   end
   
+  def body_as_text
+    browser.document.as_text
+  end
+  
+  #def html
+  #  @html ||= Nokogiri::HTML(body)
+  #end
+  
+  # Override this to use Celerity's wait_until since Capybara doesn't seem to do this already
+  # XXX: Necessary with envjs?
+  def wait_until(timeout, &block)
+    browser.wait_until(timeout, &block)
+  end
+  
+  def accepting_confirm_boxes(&block)
+    page.evaluate_script('window.__oldConfirm = window.confirm; window.confirm = function() { return true; }')
+    yield
+    page.evaluate_script('window.confirm = window.__oldConfirm')
+  end
+  
+  def rejecting_confirm_boxes
+    page.evaluate_script('window.__oldConfirm = window.confirm; window.confirm = function() { return false; }')
+    yield
+    page.evaluate_script('window.confirm = window.__oldConfirm')
+  end
+end
+
+module IntegrationExampleGroupMethods
   def self.extended(extender)
     extender.after do
       # Reset sessions so that things like session[:whatever] do not carry over into other tests
@@ -257,12 +226,11 @@ module IntegrationExampleGroupMethods
     end
   end
 
-  # TODO: Any way to NOT add the story part to the description?
-  # Maybe we need a custom formatter
-  def story(description)
-    description = description.strip.split(/[ \t]*\n+[ \t]*/).map {|line| "  #{line}\n" }.join
-    @description_args.push("\n#{description}\n")
+  def story(story=nil)
+    @story = story.strip.split(/[ \t]*\n+[ \t]*/) if story
+    @story
   end
+  alias :narrative :story
   
   def javascript(&block)
     run_javascript_tests = File.exists?("tmp/integration_spec.opts") && !!YAML.load_file("tmp/integration_spec.opts")[:javascript]
@@ -271,19 +239,6 @@ module IntegrationExampleGroupMethods
       # Copied from Capybara's Cucumber mixin
       before :all do
         Capybara.current_driver = Capybara.javascript_driver
-=begin
-        @_old_env = PADRINO_ENV
-        env = "integration"
-        silence_warnings do
-          # TODO: Need to agnosticize this
-          Padrino.send(:instance_variable_set, "@_env", nil)
-          Object.const_set(:PADRINO_ENV, env)
-          Padrino.env # initialize environment
-          Moolah.establish_database(env)
-        end
-        #@_use_transactional_fixtures = self.class.use_transactional_fixtures
-        #self.class.use_transactional_fixtures = false
-=end
       end
       
       # Basically what we're doing here is telling RSpec to truncate/seed the database
@@ -297,22 +252,16 @@ module IntegrationExampleGroupMethods
       after :all do
         #page.driver.clear_browser
         Capybara.use_default_driver
-=begin
-        env = @_old_env
-        silence_warnings do
-          # TODO: Need to agnosticize this
-          Padrino.send(:instance_variable_set, "@_env", nil)
-          Object.const_set(:PADRINO_ENV, env)
-          Padrino.env # initialize environment
-          Moolah.establish_database(env)
-        end
-        #self.class.use_transactional_fixtures = @_use_transactional_fixtures
-=end
       end
       include JavascriptExampleMethods
       instance_eval(&block)
     end
   end
+  
+  # This is now a no-op
+  #def javascript(&block)
+  #  instance_eval(&block)
+  #end
 end
 
 if defined?(Spec::Rails)
@@ -329,6 +278,7 @@ IntegrationExampleGroup.class_eval do
   include Capybara
   include Cucumber::Tableish  
   include IntegrationExampleMethods
+  #include JavascriptExampleMethods
   extend IntegrationExampleGroupMethods
 end
 Spec::Example::ExampleGroupFactory.register(:integration, IntegrationExampleGroup)
