@@ -1,8 +1,11 @@
 source :gemcutter
 
-# Project requirements
-gem 'rack-flash'
-gem 'fastercsv'
+# Padrino
+gem 'thin' # or mongrel
+#gem 'padrino', "0.9.7"
+gem 'padrino-core', ">= 0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-core"
+gem 'padrino-helpers', ">= 0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-helpers"
+gem 'padrino-gen', ">= 0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-gen"
 
 # Component requirements
 gem 'haml', ">= 3.0.0"
@@ -11,6 +14,11 @@ gem 'haml', ">= 3.0.0"
 #gem 'mongoid', "2.0.0.beta4"
 gem 'mongoid', :git => "git://github.com/durran/mongoid.git"
 #gem 'bson_ext', "0.20.1"
+
+# Project requirements
+gem 'rack-flash'
+gem 'fastercsv'
+gem 'will_paginate', :git => "git://github.com/mislav/will_paginate", :branch => "rails3"
 
 # Test requirements
 group :test do
@@ -24,9 +32,3 @@ group :test do
   gem 'factory_girl', ">= 1.2.3"
 end
 
-# Padrino
-gem 'thin' # or mongrel
-#gem 'padrino', "0.9.7"
-gem 'padrino-core', ">= 0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-core"
-gem 'padrino-helpers', ">= 0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-helpers"
-gem 'padrino-gen', ">= 0.9.10", :path => "/Users/elliot/code/vendor/cli/padrino-framework/padrino-gen"

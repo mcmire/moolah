@@ -5,6 +5,10 @@ class Moolah < Padrino::Application
   register Padrino::Helpers
   
   configure do
+    register RestfulActions
+    # use Rack::LessCss, :less_path => "#{PADRINO_ROOT}/app/stylesheets", :css_route => "/stylesheets"
+    use Rack::TrailingSlash
+    
     ##
     # Application configuration options
     #
@@ -21,11 +25,6 @@ class Moolah < Padrino::Application
     # This is necessary in >= 0.9.10
     enable :sessions
     enable :flash
-    
-    register RestfulActions
-    
-    # use Rack::LessCss, :less_path => "#{PADRINO_ROOT}/app/stylesheets", :css_route => "/stylesheets"
-    use Rack::TrailingSlash
     
     layout "application"
   end

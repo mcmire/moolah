@@ -68,4 +68,17 @@ feature "Listing transactions" do
       ["", "02/01/2009",  "", "Another transaction", "-$5.00", "Edit", "Delete"],
     ]
   end
+  
+  scenario "Displaying 30 transactions at a time" do
+    account = Factory(:account)
+    60.times { Factory(:transaction, :account => account) }
+    visit "/"
+    click "Transactions"
+    tableish('#transactions tr', 'th,td').size.should == 31
+    find('.pagination > em').text.should == "1"
+    a = find('.pagination > a')
+    a['href'].should =~ %r{/transactions\?page=2$}
+    a.text.should == "2"
+    find('.pagination').text.should =~ /1.*2/
+  end
 end

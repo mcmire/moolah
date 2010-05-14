@@ -12,3 +12,4 @@ spec.old
 *.tmproj
 config/settings.yml
 .bundle
+failed_examples.txt

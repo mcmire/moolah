@@ -3,7 +3,8 @@ Moolah.controller :transactions do
   restful :index, :map => "(/accounts/:account_id)/transactions" do
     session[:last_account_id] = params[:account_id]
     @account = Account.where(:webkey => params[:account_id]).first
-    @transactions = (params[:account_id] ? @account.transactions : Transaction).order_by([:settled_on, :desc])
+    transactions = (params[:account_id] ? @account.transactions : Transaction)
+    @transactions = transactions.order_by([:settled_on, :desc]).paginate(:page => params[:page], :per_page => 30)
     render 'transactions/index'
   end
   

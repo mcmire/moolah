@@ -16,15 +16,16 @@ TODO
  ✔ Add import rule management
  ✔ Test last_view on transactions
  ✔ Flesh out the integration specs
- 
  ✔ Switch to Mongoid
  ✘ Switch to Ruby 1.9 (enforce too?)
- * Make integration stuff into a gem and require that instead (and convert over to spec/integration)
+ 
  * Paginate the transaction list
+ * Bring the integration stuff closer to gem-state
  * Fix javascript delete multiple actions
  * Get graphs working again
  * CSSify this biatch (reset stylesheet, vertical rhythm, etc.)
  
+ * Make integration stuff into a gem and require that instead (and convert over to spec/integration)
  * Add account management
  * Javascript add/edit (click on a line to edit, click out to cancel)
  * Upon import, show a line in between current import and existing data (so we know what we've imported)

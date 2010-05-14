@@ -1,6 +1,6 @@
-require "#{Padrino.root}/config/integration_logger"
-# lib/ is loaded after config/database.rb, that's why we need this
-require 'database_preparation'
+require Padrino.root("config/integration_logger")
+# lib/ is loaded after config/database.rb now, that's why we need this here
+require Padrino.root("lib/database_preparation")
 
 class Padrino::Application
   extend DatabasePreparation
