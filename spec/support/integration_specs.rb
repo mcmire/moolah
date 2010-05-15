@@ -14,6 +14,89 @@ Capybara.default_selector = :css
 Capybara.debug = true
 
 module Capybara
+  module Driver
+    class Envjs
+      attr_reader :current_url
+      
+      # PATCH: Store new url upon redirection
+      # Original: http://github.com/sikachu/capybara-envjs/commit/eeab07786dd89b651ef88db2f172afc5c98723fc
+      def initialize(app)
+
+
+        @app_host = (ENV["CAPYBARA_APP_HOST"] || Capybara.app_host || "http://example.com")
+
+        @rack_test = @app_host =~ %r{^https?://[^.]*\.?example\.(com|org)}
+
+        if rack_test?
+          require 'rack/test'
+          class << self; self; end.instance_eval do
+            include ::Rack::Test::Methods
+            alias_method :response, :last_response
+            alias_method :request, :last_request
+          end
+        end
+
+        @app = app
+
+        master_load = browser.master["load"]
+
+        if rack_test?
+          browser.master["load"] = proc do |*args|
+            if args.size == 2 and args[1].to_s != "[object split_global]"
+              file, window = *args
+              get(file, {}, env)
+              window["evaluate"].call response.body
+            else
+              master_load.call *args
+            end
+          end
+
+          browser["window"]["$envx"]["connection"] =
+          browser.master["connection"] = @connection = proc do |*args|
+            xhr, responseHandler, data = *args
+            url = xhr.url
+            if url.index(app_host) == 0
+              url.slice! 0..(app_host.length-1)
+            end
+            params = data || {}
+            method = xhr["method"].downcase.to_sym
+            e = env;
+            if method == :post or method == :put
+              e.merge! "CONTENT_TYPE" => xhr.headers["Content-Type"]
+            end
+            if e["CONTENT_TYPE"] =~ %r{^multipart/form-data;}
+              e["CONTENT_LENGTH"] ||= params.length
+            end
+            begin
+              # puts "send #{method} #{url} #{params}"
+              @current_url = url
+              send method, url, params, e
+              while response.status == 302
+                params = {}
+                method = :get
+                url = response.location
+                # puts "redirect #{method} #{url} #{params}"
+                @current_url = url
+                send method, url, params, e
+              end
+            rescue Exception => e
+              print "got #{e} #{response.inspect}\n"
+              raise e
+            end
+            @source = response.body
+            response.headers.each do |k,v|
+              xhr.responseHeaders[k] = v
+            end
+            xhr.status = response.status
+            xhr.responseText = response.body
+            xhr.readyState = 4
+            responseHandler.call
+          end
+        end
+      end
+    end
+  end
+  
   module SaveAndOpenPage
     def self.save_and_open_page(html)
       # PATCH: Put the file in a temp directory so we don't pollute our working directory
