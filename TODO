@@ -19,9 +19,8 @@ TODO
  ✔ Switch to Mongoid
  ✘ Switch to Ruby 1.9 (enforce too?)
  
- * Paginate the transaction list
- * Bring the integration stuff closer to gem-state
- * Fix javascript delete multiple actions
+ ✔ Paginate the transaction list
+ * Fix currently disabled javascript delete multiple actions
  * Get graphs working again
  * CSSify this biatch (reset stylesheet, vertical rhythm, etc.)
  

@@ -89,18 +89,18 @@ describe Transaction do
   
   describe '#create_and_apply_import_rule!' do
     it "creates an import rule from the description, category, and account" do
-      category_id = Mongo::ObjectID.new
+      category = Factory(:category)
       account = Factory(:account)
       txn = Factory.build(:transaction,
         :account => account,
-        :category_id => category_id,
+        :category => category,
         :original_description => "SOME TRANSACTION",
         :description => "Some transaction"
       )
       rule = txn.create_and_apply_import_rule!
       rule.pattern.should == /^SOME\ TRANSACTION$/
-      rule.account.should == account
-      rule.category_id.should == category_id
+      rule.account.id.should == account.id
+      rule.category.id.should == category.id
       rule.description.should == "Some transaction"
     end
     it "escapes regex characters when creating the regex" do
