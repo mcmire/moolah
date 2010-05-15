@@ -5,7 +5,7 @@ $(function() {
       input.name = "_method";
       input.value = "delete";
       this.form.appendChild(input);
-      this.form.action = "/transactions/destroy_multiple"
+      this.form.action = this.form.action.replace("dispatch", "destroy_multiple");
     } else {
       event.preventDefault()
     }

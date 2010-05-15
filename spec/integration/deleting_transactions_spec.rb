@@ -28,6 +28,7 @@ feature "Deleting transactions" do
     end
     click "Yes, delete"
     
+    current_path.should == "/transactions"
     body.should =~ /Transaction was successfully deleted/
     tableish('#transactions tr', 'th,td').should == [
       ["", "Account", "Date", "Check #", "Description", "Amount", "", ""],
@@ -59,6 +60,7 @@ feature "Deleting transactions" do
 
     click "Yes, delete"
     
+    current_path.should == "/accounts/checking/transactions"
     body.should =~ /Transaction was successfully deleted/
     
     click "All"
@@ -79,6 +81,7 @@ feature "Deleting transactions" do
 
     click "Yes, delete"
 
+    current_path.should == "/transactions"
     body.should =~ /2 transactions were successfully deleted/
   end
   
@@ -95,6 +98,7 @@ feature "Deleting transactions" do
 
     click "Yes, delete"
 
+    current_path.should == "/accounts/checking/transactions"
     body.should =~ /2 transactions were successfully deleted/
   end
   
@@ -105,6 +109,7 @@ feature "Deleting transactions" do
     visit "/"
     click "Delete checked"
 
+    current_path.should == "/transactions"
     body.should =~ /You didn't select any transactions to delete/
   end
   
@@ -117,6 +122,7 @@ feature "Deleting transactions" do
     click "Checking"
     click "Delete checked"
     
+    current_path.should == "/accounts/checking/transactions"
     body.should =~ /You didn't select any transactions to delete/
   end
   
@@ -132,6 +138,7 @@ feature "Deleting transactions" do
         end
       end
       
+      current_path.should == "/transactions"
       body.should =~ /Transaction was successfully deleted/
       body.should_not =~ /Transaction 1/
     end
@@ -149,44 +156,77 @@ feature "Deleting transactions" do
         end
       end
 
+      current_path.should == "/accounts/checking/transactions"
       body.should =~ /Transaction was successfully deleted/
       body.should_not =~ /Transaction 1/
     end
     
-    # FIXME
-    #xscenario "Deleting some multiple transactions" do
-    #  trans1 = Factory(:transaction, :original_description => "Transaction 1")
-    #  trans2 = Factory(:transaction, :original_description => "Transaction 2")
-    #  
-    #  visit "/"
-    #  check "to_delete_#{trans1.id}"
-    #  check "to_delete_#{trans2.id}"
-    #  accepting_confirm_boxes do
-    #    within('#form') do
-    #      click_button "Delete checked"
-    #    end
-    #  end
-    #
-    #  body.should =~ /2 transactions were successfully deleted/
-    #end
+    scenario "Deleting some multiple transactions" do
+      trans1 = Factory(:transaction, :original_description => "Transaction 1")
+      trans2 = Factory(:transaction, :original_description => "Transaction 2")
+      
+      visit "/"
+      check "to_delete_#{trans1.id}"
+      check "to_delete_#{trans2.id}"
+      accepting_confirm_boxes do
+        within('#form') do
+          click_button "Delete checked"
+        end
+      end
     
-    # FIXME
-    #xscenario "Deleting some multiple transactions from a specific account" do
-    #  account = Factory(:account, :name => "Checking")
-    #  trans1 = Factory(:transaction, :account => account, :original_description => "Transaction 1")
-    #  trans2 = Factory(:transaction, :account => account, :original_description => "Transaction 2")
-    #  visit "/"
-    #  
-    #  click "Checking"
-    #  check "to_delete_#{trans1.id}"
-    #  check "to_delete_#{trans2.id}"
-    #  accepting_confirm_boxes do
-    #    within('#form') do
-    #      click_button "Delete checked"
-    #    end
-    #  end
-    #
-    #  body.should =~ /2 transactions were successfully deleted/
-    #end
+      current_path.should == "/transactions"
+      body.should =~ /2 transactions were successfully deleted/
+    end
+    
+    scenario "Deleting some multiple transactions from a specific account" do
+      account = Factory(:account, :name => "Checking")
+      trans1 = Factory(:transaction, :account => account, :original_description => "Transaction 1")
+      trans2 = Factory(:transaction, :account => account, :original_description => "Transaction 2")
+      visit "/"
+      
+      click "Checking"
+      check "to_delete_#{trans1.id}"
+      check "to_delete_#{trans2.id}"
+      accepting_confirm_boxes do
+        within('#form') do
+          click_button "Delete checked"
+        end
+      end
+    
+      current_path.should == "/accounts/checking/transactions"
+      body.should =~ /2 transactions were successfully deleted/
+    end
+    
+    scenario "Deleting no multiple transactions" do
+      trans1 = Factory(:transaction, :original_description => "Transaction 1")
+      trans2 = Factory(:transaction, :original_description => "Transaction 2")
+
+      visit "/"
+      accepting_confirm_boxes do
+        within('#form') do
+          click_button "Delete checked"
+        end
+      end
+
+      current_path.should == "/transactions"
+      body.should =~ /You didn't select any transactions to delete/
+    end
+
+    scenario "Deleting no multiple transactions from a specific account" do
+      account = Factory(:account, :name => "Checking")
+      trans1 = Factory(:transaction, :account => account, :original_description => "Transaction 1")
+      trans2 = Factory(:transaction, :account => account, :original_description => "Transaction 2")
+      visit "/"
+
+      click "Checking"
+      accepting_confirm_boxes do
+        within('#form') do
+          click_button "Delete checked"
+        end
+      end
+
+      current_path.should == "/accounts/checking/transactions"
+      body.should =~ /You didn't select any transactions to delete/
+    end
   end
 end

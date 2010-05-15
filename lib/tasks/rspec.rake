@@ -16,7 +16,7 @@ namespace :spec do
       t.spec_opts = ['--options', "spec/spec.opts"]
       if ENV["EXAMPLE"]
         t.spec_opts += ['--example', ENV["EXAMPLE"]] 
-      else
+      elsif !ENV["SPEC"]
         t.spec_opts += ['--example', file]
       end
       t.spec_opts += ['--format', "failing_examples:#{file}"]

@@ -15,13 +15,16 @@ feature "Editing import_rules" do
       :pattern => /^foo$/,
       :description => "Some description"
     )
-    visit "/import_rules"
+    visit "/"
+    
+    click "Import Rules"
     within("#import_rule_#{import_rule.id}") do
       click "Edit"
     end
-    current_path.should =~ %r|^/import_rules/([^/]+)/edit$|
+    
     fill_in "import_rule_pattern", :with => "^lakdflskjdf$"
     click "Update"
+    
     current_path.should == "/import_rules"
     body.should =~ /Import rule successfully updated/
     tableish('#import_rules tr', 'th,td').should == [

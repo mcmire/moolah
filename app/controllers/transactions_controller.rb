@@ -56,10 +56,14 @@ Moolah.controller :transactions do
   end
   
   delete :destroy_multiple, :map => "(/accounts/:account_id)/transactions/destroy_multiple" do
-    ids = Array(params[:to_delete])
-    transactions = Transaction.criteria.in(:_id => ids)
-    transactions.each(&:destroy)
-    flash[:success] = format_message(ids.size, "transaction", "successfully deleted.")
+    if params[:to_delete].present?
+      ids = Array(params[:to_delete])
+      transactions = Transaction.criteria.in(:_id => ids)
+      transactions.each(&:destroy)
+      flash[:success] = format_message(ids.size, "transaction", "successfully deleted.")
+    else
+      flash[:notice] = "You didn't select any transactions to delete."
+    end
     redirect url(:transactions, :index, :account_id => session[:last_account_id])
   end
   

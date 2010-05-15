@@ -47,10 +47,14 @@ Moolah.controller :categories do
   end
   
   delete :destroy_multiple do
-    ids = Array(params[:to_delete])
-    categories = Category.criteria.in(:_id => ids)
-    categories.each(&:destroy)
-    flash[:success] = format_message(ids.size, "category", "successfully deleted.")
+    if params[:to_delete].present?
+      ids = Array(params[:to_delete])
+      categories = Category.criteria.in(:_id => ids)
+      categories.each(&:destroy)
+      flash[:success] = format_message(ids.size, "category", "successfully deleted.")
+    else
+      flash[:notice] = "You didn't select any categories to delete."
+    end
     redirect url(:categories, :index)
   end
   

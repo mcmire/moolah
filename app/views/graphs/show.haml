@@ -1,6 +1,6 @@
 - content_for :head do
   = jqplot_javascripts
-  = javascript_include_tag "graphs", "graphs/#{@graph}"
+  = javascript_include_tag "app/graphs", "app/graphs/#{@graph}"
   = stylesheet_link_tag "vendor/jquery.jqplot.css"
 
 %p= link_to "&laquo; Return to graphs", url(:graphs, :index)

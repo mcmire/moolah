@@ -8,7 +8,8 @@ feature "Listing import rules" do
   EOT
   
   scenario "Listing no import rules" do
-    visit "/import_rules"
+    visit "/"
+    click "Import Rules"
     body.should =~ /No import rules/
   end
   
@@ -27,7 +28,8 @@ feature "Listing import rules" do
       :pattern => /bar/,
       :description => "Another description"
     )
-    visit "/import_rules"
+    visit "/"
+    click "Import Rules"
     tableish('#import_rules tr', 'th,td').should == [
       ["", "Pattern", "Account", "Category", "Description", "", ""],
       ["", "/^foo$/", "Checking", "Some Category", "Some description", "Edit", "Delete"],

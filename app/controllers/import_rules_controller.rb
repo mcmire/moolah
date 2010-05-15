@@ -47,10 +47,14 @@ Moolah.controller :import_rules do
   end
   
   delete :destroy_multiple do
-    ids = Array(params[:to_delete])
-    import_rules = ImportRule.criteria.in(:_id => ids)
-    import_rules.each(&:destroy)
-    flash[:success] = format_message(ids.size, "import rule", "successfully deleted.")
+    if params[:to_delete].present?
+      ids = Array(params[:to_delete])
+      import_rules = ImportRule.criteria.in(:_id => ids)
+      import_rules.each(&:destroy)
+      flash[:success] = format_message(ids.size, "import rule", "successfully deleted.")
+    else
+      flash[:notice] = "You didn't select any import rules to delete."
+    end
     redirect url(:import_rules, :index)
   end
   

@@ -12,9 +12,13 @@ feature "Importing transactions" do
   end
   
   scenario "Importing a CSV of transactions" do
-    visit "/accounts/checking/transactions/import"
+    visit "/"
+    click "Checking"
+    
+    click "Import transactions into checking account"
     attach_file "file", "#{PADRINO_ROOT}/spec/fixtures/transactions.csv"
     click "Import"
+    
     current_path.should == "/accounts/checking/transactions"
     tableish('#transactions tr', 'th,td').should == [
       ["", "Date",        "Check #", "Description",                   "Amount", "", ""],
@@ -28,12 +32,20 @@ feature "Importing transactions" do
   end
   
   scenario "Importing duplicate transactions" do
-    visit "/accounts/checking/transactions/import"
+    visit "/"
+    click "Checking"
+    
+    click "Import transactions into checking account"
     attach_file "file", "#{PADRINO_ROOT}/spec/fixtures/transactions.csv"
     click "Import"
-    visit "/accounts/checking/transactions/import"
+    
+    current_path.should == "/accounts/checking/transactions"
+    click "Import transactions into checking account"
+    
     attach_file "file", "#{PADRINO_ROOT}/spec/fixtures/transactions.csv"
     click "Import"
+   
+    current_path.should == "/accounts/checking/transactions"
     body.should =~ /No transactions were imported/
   end
 end

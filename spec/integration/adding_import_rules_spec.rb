@@ -21,6 +21,7 @@ feature "Adding import rules" do
     fill_in "import_rule_description", :with => "The description"
     click "Save"
 
+    current_path.should == "/import_rules"
     body.should =~ /Import rule successfully added/
     tableish('#import_rules tr', 'th,td').should == [
       ["", "Pattern", "Account", "Category", "Description", "", ""],
@@ -56,6 +57,7 @@ feature "Adding import rules" do
     check "Apply these settings to past and future TARGET T0695 C  TARGET T0695 transactions"
     click "Update"
     
+    current_path.should == "/accounts/checking/transactions"
     within "#transaction_#{txn2.id}" do
       click "Edit"
     end
@@ -73,6 +75,7 @@ feature "Adding import rules" do
     attach_file "file", "#{PADRINO_ROOT}/spec/fixtures/transactions2.csv"
     click "Import"
     
+    current_path.should == "/accounts/checking/transactions"
     tableish('#transactions tr', 'th,td').should == [
       ["", "Date", "Check #", "Description", "Amount", "", ""],
       ["", "03/01/2009", "", "Target", "-$6.78", "Edit", "Delete"],

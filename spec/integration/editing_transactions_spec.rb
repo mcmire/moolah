@@ -15,7 +15,7 @@ feature "Editing transactions" do
       :amount => 2000
     )
     visit "/"
-    
+
     click "Checking"
     within("#transaction_#{trans.id}") do
       click "Edit"
@@ -24,6 +24,7 @@ feature "Editing transactions" do
     fill_in "transaction_description", :with => "The best transaction"
     click "Update"
 
+    current_path.should == "/accounts/checking/transactions"
     body.should =~ /Transaction successfully updated/
     tableish('#transactions tr', 'th,td').should == [
       ["", "Date", "Check #", "Description", "Amount", "", ""],

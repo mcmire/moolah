@@ -19,6 +19,7 @@ feature "Deleting categories" do
 
     click "Yes, delete"
     
+    current_path.should == "/categories"
     body.should =~ /Category was successfully deleted/
     body.should_not =~ /Category 1/
   end
@@ -35,6 +36,7 @@ feature "Deleting categories" do
     
     click "Yes, delete"
     
+    current_path.should == "/categories"
     body.should =~ /2 categories were successfully deleted/
   end
   
@@ -46,6 +48,7 @@ feature "Deleting categories" do
     click "Categories"
     click "Delete checked"
 
+    current_path.should == "/categories"
     body.should =~ /You didn't select any categories to delete/
   end
   
@@ -62,26 +65,43 @@ feature "Deleting categories" do
         end
       end
 
+      current_path.should == "/categories"
       body.should =~ /Category was successfully deleted/
       body.should_not =~ /Category 1/
     end
     
-    # FIXME
-    #scenario "Deleting some multiple categories" do
-    #  category1 = Factory(:category, :name => "Category 1")
-    #  category2 = Factory(:category, :name => "Category 2")
-    #  visit "/"
-    #  
-    #  click "Categories"
-    #  check "to_delete_#{category1.id}"
-    #  check "to_delete_#{category2.id}"
-    #  accepting_confirm_boxes do
-    #    within('#form') do
-    #      click_button "Delete checked"
-    #    end
-    #  end
-    #
-    #  body.should =~ /2 categories were successfully deleted/
-    #end
+    scenario "Deleting some multiple categories" do
+      category1 = Factory(:category, :name => "Category 1")
+      category2 = Factory(:category, :name => "Category 2")
+      visit "/"
+      
+      click "Categories"
+      check "to_delete_#{category1.id}"
+      check "to_delete_#{category2.id}"
+      accepting_confirm_boxes do
+        within('#form') do
+          click_button "Delete checked"
+        end
+      end
+    
+      current_path.should == "/categories"
+      body.should =~ /2 categories were successfully deleted/
+    end
+    
+    scenario "Deleting no multiple categories" do
+      category1 = Factory(:category, :name => "Category 1")
+      category2 = Factory(:category, :name => "Category 2")
+      visit "/"
+
+      click "Categories"
+      accepting_confirm_boxes do
+        within('#form') do
+          click_button "Delete checked"
+        end
+      end
+
+      current_path.should == "/categories"
+      body.should =~ /You didn't select any categories to delete/
+    end
   end
 end

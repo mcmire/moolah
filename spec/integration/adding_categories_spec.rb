@@ -16,6 +16,7 @@ feature "Adding categories" do
     fill_in "Name", :with => "Some Category"
     click "Save"
     
+    current_path.should == "/categories"
     body.should =~ /Category successfully added/
     tableish('#categories tr', 'th,td').should == [
       ["", "Name", "", ""],

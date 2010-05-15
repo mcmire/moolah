@@ -8,7 +8,8 @@ feature "Listing categories" do
   EOT
   
   scenario "Listing no categories" do
-    visit "/categories"
+    visit "/"
+    click "Categories"
     body.should =~ /No categories/
   end
   
@@ -16,7 +17,8 @@ feature "Listing categories" do
     Factory(:category, :name => "Poppy Seeds")
     Factory(:category, :name => "Abracadabra")
     Factory(:category, :name => "Zing Way")
-    visit "/categories"
+    visit "/"
+    click "Categories"
     tableish('#categories tr', 'th,td').should == [
       ["", "Name", "", ""],
       ["", "Abracadabra", "Edit", "Delete"],

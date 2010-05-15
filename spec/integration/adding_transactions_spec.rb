@@ -21,6 +21,7 @@ feature "Adding transactions" do
     fill_in "transaction_settled_on", :with => "2010-01-01"
     click "Save"
     
+    current_path.should == "/accounts/checking/transactions"
     body.should =~ /Transaction successfully added/
     tableish('#transactions tr', 'th,td').should == [
       ["", "Date", "Check #", "Description", "Amount", "", ""],

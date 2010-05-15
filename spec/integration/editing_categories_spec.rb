@@ -8,13 +8,16 @@ feature "Editing categories" do
   
   scenario "Editing a category" do
     category = Factory(:category, :name => "Some Category")
-    visit "/categories"
+    visit "/"
+    
+    click "Categories"
     within("#category_#{category.id}") do
       click "Edit"
     end
-    current_path.should =~ %r|^/categories/([^/]+)/edit$|
+    
     fill_in "category_name", :with => "Awesome Category"
     click "Update"
+    
     current_path.should == "/categories"
     body.should =~ /Category successfully updated/
     tableish('#categories tr', 'th,td').should == [

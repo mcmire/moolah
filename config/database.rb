@@ -1,4 +1,4 @@
-require Padrino.root("config/integration_logger")
+require Padrino.root("config/logger")
 # lib/ is loaded after config/database.rb now, that's why we need this here
 require Padrino.root("lib/database_preparation")
 
