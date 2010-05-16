@@ -1,0 +1,23 @@
+.rounded {
+  /*line-height: normal;*/
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+/* We have to define different padding on the buttons for any Gecko browser (e.g. Firefox)
+ * since Gecko renders inputs, buttons, and links differently (yes, all three)
+ * For the Gecko-specific hack, see:
+ * http://perishablepress.com/press/2009/06/28/css-hacks-for-different-versions-of-firefox/#comment-72297 */
+
+body:-moz-last-node button.rounded {
+  padding-left: .rounded['padding-left'] + 1;
+  padding-right: .rounded['padding-right'] + 1;
+}
+body:-moz-last-node a.rounded {
+  padding-top: .rounded['padding-top'] + 1;
+  padding-bottom: .rounded['padding-bottom'] + 1;
+  padding-left: .rounded['padding-left'] + 3;
+  padding-right: .rounded['padding-right'] + 3;
+}

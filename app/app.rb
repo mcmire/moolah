@@ -6,7 +6,7 @@ class Moolah < Padrino::Application
   
   configure do
     register RestfulActions
-    # use Rack::LessCss, :less_path => "#{PADRINO_ROOT}/app/stylesheets", :css_route => "/stylesheets"
+    use Rack::LessCss, :less_path => "#{PADRINO_ROOT}/app/stylesheets", :css_route => "/stylesheets"
     use Rack::TrailingSlash
     
     ##

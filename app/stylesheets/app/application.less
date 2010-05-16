@@ -1,0 +1,206 @@
+@import "reset.css";
+@import "base.css";
+@import "buttons.less";
+@import "stylish-forms.less";
+
+/*==============================================================*/
+/* Base */
+
+.header-font {
+  font-family: "Museo Sans", Arial, sans-serif;
+  font-weight: normal;
+}
+.body-font {
+  font-family: "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+}
+
+body {
+  .body-font;
+  /*background: url(/images/app/grid21.gif) 0 0;*/
+  margin: 0;
+  font-size: 13px;
+}
+
+/*==============================================================*/
+/* Forms */
+
+button {
+  .body-font;
+  vertical-align: middle;
+}
+
+.rounded {
+  font-size: 13px;
+  /*background-color: #3F8C2D;*/
+  /*background-color: #2969B5;*/
+  background-color: #333;
+  /*background-image: none;*/
+}
+a.rounded:hover {
+  text-decoration: none;
+}
+.rounded.cancel {
+  background-color: #c0c0c0;
+  border: 1px solid rgba(0,0,0,.10);
+}
+
+form.stylish {
+  select, input[type=text], input[type=password] {
+    margin: 0;
+  }
+  div {
+    margin-bottom: 5px;
+  }
+}
+
+/*==============================================================*/
+/* Links */
+
+a {
+  color: #3F8C2D;
+  text-decoration: none;
+  /*font-weight: bold;*/
+}
+a:hover {
+  text-decoration: underline;
+}
+a:active {
+  position: relative;
+  top: 1px;
+}
+
+h1, h2, h3, h4, h5 {
+  .header-font;
+  /*color: #333;*/
+}
+
+/*==============================================================*/
+/* Tables */
+
+table.stylish {
+  th {
+    /*background-color: #D9C543;*/
+    background-color: #555;
+    color: white;
+  }
+}
+
+/*==============================================================*/
+/* General classes */
+
+.clearer {
+  overflow: hidden;
+}
+
+.left {
+  text-align: left;
+}
+.tcenter {
+  text-align: center;
+}
+.tright {
+  text-align: center;
+}
+.tjust {
+  text-align: center;
+}
+
+.bigger {
+  font-size: 120%;
+}
+
+/*==============================================================*/
+/* Structure */
+
+#header, #main {
+  padding: 0 21px;
+}
+
+#header, #header a {
+  color: white;
+}
+
+header {
+  .header-font;
+  overflow: hidden;
+  
+  h1, h2, h3, nav {
+    float: left;
+  }
+  
+  nav {
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    li {
+      margin: 0;
+      padding: 0;
+      display: inline;
+      /*
+      position: relative;
+      top: 3px;
+      */
+    }
+  }
+}
+
+#header {
+  height: 84px;
+  margin-bottom: 21px;
+  background-color: #3F8C2D;
+  border-bottom: 1px solid #C7AE46;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+  
+  h1, nav {
+    line-height: 84px;
+  }
+  
+  nav {
+    font-size: 21px;
+    ul {
+      margin-left: 40px;
+    }    
+    a {
+      -webkit-border-radius: 15px;
+      -moz-border-radius: 15px;
+      border-radius: 15px;
+      padding: 6px 17px 8px;
+    }
+    a:hover {
+      color: #3F8C2D;
+      background-color: white;
+      text-decoration: none;
+      text-shadow: none;
+    }
+  }
+}
+
+#main {
+  header {
+    height: 42px;
+    margin-bottom: 21px;
+  }
+  
+  h2, nav {
+    line-height: 42px;
+  }
+  
+  nav {
+    font-size: 18px;
+    ul {
+      margin-left: 10px;
+    }    
+    li {
+      padding-left: 20px;
+      position: relative;
+      top: 3px;
+    }
+  }
+}
+
+/*==============================================================*/
+/* Action-specific stuff */
+

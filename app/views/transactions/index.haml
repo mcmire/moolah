@@ -4,30 +4,32 @@
   = javascript_include_tag "lib/restful_destroy", "app/delete_multiple"
   = stylesheet_link_tag "app/pagination"
 
-%ul
-  %li= link_to "All", url(:transactions, :index, :account_id => nil)
-  - for account in Account.all
-    %li= link_to account.name, url(:transactions, :index, :account_id => account.webkey)
+- content_for :title do
+  %nav#transactions-nav
+    %ul
+      %li= link_to "All", url(:transactions, :index, :account_id => nil)
+      - for account in Account.all
+        %li= link_to account.name, url(:transactions, :index, :account_id => account.webkey)
 
 - if @transactions.any?
-  = page_entries_info(@transactions) + "."
+  %p.bigger= page_entries_info(@transactions) + "."
   - form_tag url(:transactions, :dispatch, :account_id => params[:account_id]), :id => "form" do
-    %p
-      = submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :class => "delete", :title => "Are you sure you want to delete these transactions?"
-    %table#transactions
+    %div(style="margin: 5px 0")
+      %button#delete_checked.rounded(name="delete_checked" title="Are you sure you want to delete these transactions?") Delete checked
+    %table#transactions.stylish
       %tr
-        %th= check_box_tag "delete_all", :id => "delete_all"
+        %th.tcenter= check_box_tag "delete_all", :id => "delete_all"
         - unless @account
           %th Account
         %th Date
         %th Check #
         %th Description
         %th Amount
-        %td
-        %td
+        %th
+        %th
       - for transaction in @transactions
         %tr{:id => "transaction_#{transaction.id}"}
-          %td= check_box_tag "to_delete[]", :value => transaction.id, :id => "to_delete_#{transaction.id}", :class => "delete_box"
+          %td.tcenter= check_box_tag "to_delete[]", :value => transaction.id, :id => "to_delete_#{transaction.id}", :class => "delete_box"
           - unless params[:account_id]
             %td= transaction.account.name
           %td= transaction.settled_on.strftime("%m/%d/%Y")

@@ -1,9 +1,13 @@
-- resourceful_form_for category, :html => {:id => "stylish"} do |f|
+- content_for :head_styles do
+  :plain
+    form.stylish label { width: 50px }
+
+- resourceful_form_for category, :html => {:class => "stylish"} do |f|
   = f.error_messages
-  %div
-    = f.label :name
-    = f.text_field :name, :size => 50
-  %div
-    = f.submit button_text
-    or
-    = link_to "Cancel", url(:categories, :index)
+  %div.fields
+    %div.text
+      = f.label :name
+      = f.text_field :name, :size => 50
+  %p.buttons
+    %button.rounded(type="submit")= button_text
+    = link_to "Cancel", url(:categories, :index), :class => "rounded cancel"

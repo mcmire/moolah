@@ -1,0 +1,182 @@
+/*
+ * Stylesheet for a layout with a 10px base font size, 14px body font size,
+ * and 21-pixel vertical rhythm.
+ *
+ * http://24ways.org/2006/compose-to-a-vertical-rhythm
+ * http://drewish.com/tools/vertical-rhythm
+ */
+
+body {
+  font-size: 14px;
+  line-height: 21px;
+  margin: 21px;
+}
+
+a {
+  text-decoration: underline
+}
+
+hr {
+  border: none;
+  color: gray;
+  background-color: gray;
+  height: 1px;
+  padding: 0;
+  margin: 21px 0;
+}
+
+h1, h2, h3, h4, h5, h6,
+p, ul, ol, dl, pre, form, table {
+  margin-bottom: 21px;
+}
+
+/*==============================================================*/
+/* Headers */
+
+/* (42-14)/5 = 5.6 (17/3) */
+
+h1 {
+  font-size: 42px; /* 3 */
+  line-height: 42px;
+}
+
+h2 {
+  font-size: 33px;
+  line-height: 42px;
+}
+
+h3 {
+  font-size: 27px;
+  line-height: 31.5px;
+}
+
+h4 {
+  font-size: 21px;
+  line-height: 31.5px;
+}
+
+h5 {
+  font-size: 17px;
+  line-height: 21px;
+}
+
+h6 {
+  font-size: 14px;
+  line-height: 21px;
+}
+
+/*==============================================================*/
+/* Block-level elements */
+
+blockquote {
+  margin-left: 40px
+}
+
+ul, ol {
+  margin-left: 20px;
+}
+  
+ul {
+  list-style: disc outside
+}
+
+ol {
+  list-style: decimal outside
+}
+
+dd {
+  margin-left: 40px
+}
+
+/*==============================================================*/
+/* Inline elements */
+
+code, kbd, samp, pre, tt, var {
+  font-size: 100%;
+  font-family: monospace
+}
+
+small, sup, sub {
+  font-size: 85%
+}
+
+abbr, acronym {
+  text-transform: uppercase;
+  font-size: 85%;
+  /*letter-spacing: .1em*/
+}
+abbr[title], acronym[title], dfn[title]{
+  cursor: help;
+  border-bottom: 1px dotted black
+}
+
+sup {
+  vertical-align: super
+}
+sub {
+  vertical-align: sub
+}
+
+img {
+  border: none
+}
+
+/*==============================================================*/
+/* Forms */
+
+input, select, button {
+  cursor: pointer;
+  /*vertical-align: middle;*/
+}
+
+input, textarea, select {
+  font-size: 100%;
+  /*margin: 0;*/
+}
+
+input[type=text], input[type=password], textarea, select {
+  border-top: 1px solid #aaa;
+  border-left: 1px solid #aaa;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
+input[type='text'], input[type='password'] {
+  cursor: text;
+  /*padding: 0;*/
+}
+
+input[type='hidden'] {
+  display: none
+}
+
+optgroup {
+  font-family: inherit
+}
+
+/*==============================================================*/
+/* Tables */
+
+table {
+  border-collapse: collapse;
+  /*margin: 21px 0;*/
+}
+  
+td, th {
+  padding-right: 20px;
+  text-align: left;
+}
+    
+th {
+  font-weight: bold
+}
+
+/*==============================================================*/
+/* Helpful classes */
+
+.inline-block {
+  display: -moz-inline-box;
+  display: inline-block;
+  -moz-box-orient: vertical;
+  vertical-align: bottom;
+}

@@ -1,0 +1,9 @@
+- content_for :head do
+  = stylesheet_link_tag "dev/button_test"
+
+%p.buttons(style="background-color: cyan")
+  Lorem ipsum
+  %input.rounded(type="submit" value="Submit")
+  %button.rounded(type="submit") Submit
+  %a.rounded(href="#") Submit
+  dolor sit amet

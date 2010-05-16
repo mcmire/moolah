@@ -1,37 +1,41 @@
-- form_for transaction, url, :id => "stylish", :method => method do |f|
+- content_for :head_styles do
+  :plain
+    form.stylish label { width: 150px }
+
+- form_for transaction, url, :class => "stylish", :method => method do |f|
   = f.error_messages
-  %div
-    = label_tag "transaction[amount][type]", :caption => "Type"
-    = select_tag "transaction[amount][type]", :options => [["Debit", "debit"], ["Credit", "credit"]], :selected => (transaction.amount && transaction.amount.type)
-  %div
-    = f.label :category_id, :caption => "Category"
-    = f.select :category_id, :options => [["Uncategorized", ""]] + Category.all.map {|c| [c.name, c.id] }
-  - unless transaction.new_record?
-    %div
-      %label Original description:
-      = transaction.original_description
-  %div
-    = f.label :description
-    = f.text_field :description, :size => 50
-  %div
-    = f.label :check_number
-    = f.text_field :check_number, :size => 4
-  %div
-    = label_tag "transaction[amount][value]", :caption => "Amount"
-    = text_field_tag "transaction[amount][value]", :size => 6, :value => (transaction.amount && transaction.amount.value)
-  %div
-    = f.label :settled_on
-    = f.text_field :settled_on, :size => 12
-  - if transaction.import_rule
-    %div
+  %div.fields
+    %div.select
+      = label_tag "transaction[amount][type]", :caption => "Type"
+      = select_tag "transaction[amount][type]", :options => [["Debit", "debit"], ["Credit", "credit"]], :selected => (transaction.amount && transaction.amount.type)
+    %div.select
+      = f.label :category_id, :caption => "Category"
+      = f.select :category_id, :options => [["Uncategorized", ""]] + Category.all.map {|c| [c.name, c.id] }
+    - unless transaction.new_record?
+      %div
+        %label Original description:
+        = transaction.original_description
+    %div.text
+      = f.label :description
+      = f.text_field :description, :size => 50
+    %div.text
+      = f.label :check_number
+      = f.text_field :check_number, :size => 4
+    %div.text
+      = label_tag "transaction[amount][value]", :caption => "Amount"
+      = text_field_tag "transaction[amount][value]", :size => 6, :value => (transaction.amount && transaction.amount.value)
+    %div.text
+      = f.label :settled_on
+      = f.text_field :settled_on, :size => 12
+  %div.fields
+    - if transaction.import_rule
       == Transactions named <b>#{transaction.original_description}</b> are imported as <b>#{transaction.import_rule.description}</b>.
       = link_to "Update your import rules.", url(:import_rules, :index)
-  - else
-    %div
-      = f.check_box :creating_import_rule
-      - caption = "Apply these settings to past and future #{transaction.original_description ? "<b>#{transaction.original_description}</b>" : "these kind of"} transactions"
-      = f.label :creating_import_rule, :caption => caption
-  %div
-    = f.submit button_text
-    or
-    = link_to "Cancel", url(:transactions, :index, :account_id => params[:account_id])
+    - else
+      %div.checkbox
+        = f.check_box :creating_import_rule
+        - caption = "Apply these settings to past and future #{transaction.original_description ? "<b>#{transaction.original_description}</b> transactions" : "transactions like these"}"
+        = f.label :creating_import_rule, :caption => caption
+  %p.buttons
+    %button.rounded(type="submit")= button_text
+    = link_to "Cancel", url(:transactions, :index, :account_id => params[:account_id]), :class => "rounded cancel"

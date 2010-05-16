@@ -1,0 +1,72 @@
+- @title = "h2. Page title"
+
+%p Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+%p
+  Lorem ipsum dolor sit amet,
+  %a(href="#") consectetur adipisicing
+  elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+%p
+  %strong.highlight Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+  %a(href="#") nostrud exercitation
+  ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  
+%h3 h3. Code blocks
+
+%p (Actually these will appear differently inside posts...)
+
+%pre
+  %code
+    :preserve
+      class Array
+        def -(other)
+          arr = self.dup
+          other.each do |x|
+            arr.delete(x) if arr.include?(x)
+          end
+        end
+      end
+  
+%h3 h3. Unordered lists
+%ul
+  %li Lorem ipsum dolor sit amet
+  %li Consectetur adipisicing elit
+  %li Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
+  %li Ut enim ad minim veniam
+  
+%h3 h3. Ordered lists
+%ol
+  %li Consectetur adipisicing elit
+  %li Sed do eiusmod tempor incididunt ut labore
+  %li Et dolore magna aliqua
+
+%h3 h3. Blockquotes
+%blockquote
+  %p Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  
+%h3 h3. Definition lists
+%dl
+  %dt Lorem ipsum dolor sit amet
+  %dd Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+  %dt Ut enim ad minim veniam
+  %dd Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+  %dt Duis aute irure dolor
+  %dd In reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+  %dt Excepteur sint occaecat
+  %dd Cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    
+%h3 h3. Tables
+%table
+  %tr
+    %th Item
+    %th Quantity
+    %th Price
+  %tr
+    %td Lorem ipsum dolor
+    %td 1
+    %td 10.00
+  %tr
+    %td Adipisicing elit
+    %td 2
+    %td $12.00

@@ -1,18 +1,22 @@
-- resourceful_form_for import_rule, :html => {:id => "stylish"} do |f|
+- content_for :head_styles do
+  :plain
+    form.stylish label { width: 100px }
+
+- resourceful_form_for import_rule, :html => {:class => "stylish"} do |f|
   = f.error_messages
-  %div
-    = f.label :pattern
-    = f.text_field :pattern, :size => 50, :value => (import_rule.pattern && import_rule.pattern.source)
-  %div
-    = f.label :account_id
-    = f.select :account_id, :options => Account.all.map {|a| [a.name, a.id] }
-  %div
-    = f.label :category_id, :caption => "Category"
-    = f.select :category_id, :options => Category.all.map {|c| [c.name, c.id] }
-  %div
-    = f.label :description
-    = f.text_field :description, :size => 50
-  %div
-    = f.submit button_text
-    or
-    = link_to "Cancel", url(:import_rules, :index)
+  %div.fields
+    %div.text
+      = f.label :pattern
+      = f.text_field :pattern, :size => 50, :value => (import_rule.pattern && import_rule.pattern.source)
+    %div.select
+      = f.label :account_id
+      = f.select :account_id, :options => Account.all.map {|a| [a.name, a.id] }
+    %div.select
+      = f.label :category_id, :caption => "Category"
+      = f.select :category_id, :options => Category.all.map {|c| [c.name, c.id] }
+    %div.text
+      = f.label :description
+      = f.text_field :description, :size => 50
+  %p.buttons
+    %button.rounded(type="submit")= button_text
+    = link_to "Cancel", url(:import_rules, :index, :account_id => params[:account_id]), :class => "rounded cancel"
