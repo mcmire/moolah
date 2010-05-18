@@ -2,7 +2,7 @@
 %html
   %head
     %meta(charset="utf-8")
-    %title= window_title(@title)
+    %title= window_title
     /= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"
     = javascript_include_tag "vendor/jquery.min.js"
     = javascript_include_tag "vendor/jquery.form.js"
@@ -12,19 +12,21 @@
       = yield_content :head_styles
     %script(type="text/javascript" language="javascript")
       = yield_content :head_scripts
-  %body
-    %header#header
-      %h1 Moolah
+  %body(id="#{body_id}" class="#{body_class}")
+    %header
+      %h1= Moolah[:site_title]
       %nav
         %ul
-          %li= link_to "Transactions", url(:transactions, :index)
-          %li= link_to "Categories", url(:categories, :index)
-          %li= link_to "Import Rules", url(:import_rules, :index)
-          %li= link_to "Graphs", url(:graphs, :index)
+          %li
+            = nav_link_to "Transactions", url(:transactions, :index)
+            %div
+              %ul
+                %li= link_to "All", url(:transactions, :index, :account_id => nil)
+                - for account in Account.all
+                  %li= link_to account.name, url(:transactions, :index, :account_id => account.webkey)
+          %li= nav_link_to "Categories", url(:categories, :index)
+          %li= nav_link_to "Import Rules", url(:import_rules, :index)
+          %li= nav_link_to "Graphs", url(:graphs, :index)
     #main
-      - if @title
-        %header
-          %h2= @title
-          = yield_content :title
       = message_divs
       = yield

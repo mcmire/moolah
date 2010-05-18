@@ -1,19 +1,13 @@
 /* Adapted from Zurb's super awesome buttons */
 /* http://www.zurb.com/playground/super-awesome-buttons */
 
-.rounded {
-  background: #555 url(/images/vendor/buttons/36px-blended.png) repeat-x;
+.srounded, .mrounded, .lrounded {
+  background: #555 url(/images/vendor/buttons/bg.png) repeat-x center left;
   display: inline-block;
-  padding-top: 3px;
-  padding-bottom: 5px;
-  padding-left: 12px;
-  padding-right: 12px;
   color: #fff;
   text-decoration: none;
   font-weight: bold;
   line-height: normal;
-  -webkit-border-radius: 15px; 
-  -moz-border-radius: 15px;
   /*
   -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
   -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
@@ -23,17 +17,60 @@
   border-bottom-color: rgba(0,0,0,.35); 
   cursor: pointer;
 }
-button.rounded {
+button.srounded,
+button.mrounded,
+button.lrounded {
   /* not really sure why we have to do this */
   position: relative;
   top: -1px;
 }
-.rounded:active {
-  background-image: url(/images/vendor/buttons/36px-blended-rev.png);
+.srounded:active,
+.mrounded:active,
+.lrounded:active {
+  background-image: url(/images/vendor/buttons/bg-rev.png);
   text-shadow: 0px 1px 1px rgba(0,0,0,0.25);
   border-bottom-color: rgba(0,0,0,.25); 
   border-top-color: rgba(0,0,0,.25); 
   cursor: pointer;
+}
+
+/* Sizes ---------- */
+@srounded_pt: 2px;
+@srounded_pb: 3px;
+@srounded_plr: 10px;
+.srounded {
+  font-size: 11px; 
+  -webkit-border-radius: 12px; 
+  -moz-border-radius: 12px;
+  padding-top: @srounded_pt;
+  padding-bottom: @srounded_pb;
+  padding-left: @srounded_plr;
+  padding-right: @srounded_plr;
+}
+@mrounded_pt: 3px;
+@mrounded_pb: 5px;
+@mrounded_plr: 12px;
+.mrounded {
+  font-size: 13px;
+  -webkit-border-radius: 15px; 
+  -moz-border-radius: 15px;
+  padding-top: @mrounded_pt;
+  padding-bottom: @mrounded_pb;
+  padding-left: @mrounded_plr;
+  padding-right: @mrounded_plr;
+}
+@lrounded_pt: 6px;
+@lrounded_pb: 8px;
+@lrounded_plr: 17px;
+.lrounded {
+  font-size: 14px;
+  background-position: 0 0;
+  -webkit-border-radius: 18px; 
+  -moz-border-radius: 18px;
+  padding-top: @lrounded_pt;
+  padding-bottom: @lrounded_pb;
+  padding-left: @lrounded_plr;
+  padding-right: @lrounded_plr;
 }
 
 /* We have to define different padding on the buttons for any Gecko browser (e.g. Firefox)
@@ -41,49 +78,62 @@ button.rounded {
  * For the Gecko-specific hack, see:
  * http://perishablepress.com/press/2009/06/28/css-hacks-for-different-versions-of-firefox/#comment-72297 */
 
-body:-moz-last-node button.rounded {
-  padding-left: .rounded['padding-left'] + 1;
-  padding-right: .rounded['padding-right'] + 1;
+body:-moz-last-node button.srounded {
+  padding-left:  @srounded_plr + 1;
+  padding-right: @srounded_plr + 1;
 }
-body:-moz-last-node a.rounded {
-  padding-top: .rounded['padding-top'] + 1;
-  padding-bottom: .rounded['padding-bottom'] + 1;
-  padding-left: .rounded['padding-left'] + 3;
-  padding-right: .rounded['padding-right'] + 3;
-}
-
-/* Sizes ---------- */
-.small.rounded {
-  font-size: 11px; 
-  -webkit-border-radius: 12px; 
-  -moz-border-radius: 12px;
-}
-.medium.rounded {
-  font-size: 13px;
-}
-.large.rounded {
-  font-size: 14px;
-  background-position: 0 0;
-  padding: 6px 17px 8px;
-  -webkit-border-radius: 18px; 
-  -moz-border-radius: 18px;
+body:-moz-last-node a.srounded {
+  padding-top:    @srounded_pt  + 1;
+  padding-bottom: @srounded_pb  + 1;
+  padding-left:   @srounded_plr + 3;
+  padding-right:  @srounded_plr + 3;
 }
 
-/* TODO: may have to override padding for large button too */
+body:-moz-last-node button.mrounded {
+  padding-left:  @mrounded_plr + 1;
+  padding-right: @mrounded_plr + 1;
+}
+body:-moz-last-node a.mrounded {
+  padding-top:    @mrounded_pt  + 1;
+  padding-bottom: @mrounded_pb  + 1;
+  padding-left:   @mrounded_plr + 3;
+  padding-right:  @mrounded_plr + 3;
+}
+
+body:-moz-last-node button.lrounded {
+  padding-left:  @lrounded_plr + 1;
+  padding-right: @lrounded_plr + 1;
+}
+body:-moz-last-node a.lrounded {
+  padding-top:    @lrounded_pt  + 1;
+  padding-bottom: @lrounded_pb  + 1;
+  padding-left:   @lrounded_plr + 3;
+  padding-right:  @lrounded_plr + 3;
+}
  
 /* Colors ---------- */
-.blue.rounded {
+.blue.srounded,
+.blue.mrounded,
+.blue.lrounded {
   background-color: #2daebf;
 }
-.red.rounded {
+.red.srounded,
+.red.mrounded,
+.red.lrounded {
   background-color: #e33100;
 }
-.magenta.rounded {
+.magenta.srounded,
+.magenta.mrounded,
+.magenta.lrounded {
   background-color: #a9014b;
 }
-.orange.rounded {
+.orange.srounded,
+.orange.mrounded,
+.orange.lrounded {
   background-color: #ff5c00;
 }
-.yellow.rounded {
+.yellow.srounded,
+.yellow.mrounded,
+.yellow.lrounded {
   background-color: #ffb515;
 }
