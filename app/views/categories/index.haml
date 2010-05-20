@@ -5,8 +5,8 @@
 
 - if @categories.any?
   - form_tag url(:categories, :dispatch), :id => "form" do
-    %div(style="margin: 5px 0")
-      %button#delete_checked.rounded(name="delete_checked" title="Are you sure you want to delete these categories?") Delete checked
+    %p(style="margin-top: -5px; margin-bottom: 17px")
+      = button_submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :title => "Are you sure you want to delete these categories?", :class => "light yellow medium"
     %table#categories.stylish
       %tr
         %th= check_box_tag "delete_all", :id => "delete_all"

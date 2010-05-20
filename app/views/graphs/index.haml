@@ -1,6 +1,6 @@
 - @title = "Graphs Galore!"
 
-%ul
+%ul.bigger
   %li
     Balance
     = '(' + %w(daily monthly bimonthly).map {|x| link_to(x, "/graphs/#{x}_balance") }.join(", ") + ')'

@@ -1,8 +1,5 @@
 @import "reset.css";
 @import "base.css";
-@import "buttons.less";
-@import "stylish-forms.less";
-//@import "pagination.less";
 
 /*==============================================================*/
 /* Base */
@@ -51,58 +48,6 @@ h1, h2, h3, h4, h5 {
 /*==============================================================*/
 /* Forms */
 
-button {
-  .body-font;
-  vertical-align: middle;
-}
-
-a.srounded:active,
-a.mrounded:active,
-a.lrounded:active {
-  top: 0;
-}
-
-a.srounded:hover,
-a.mrounded:hover,
-a.lrounded:hover {
-  text-decoration: none;
-}
-.black.srounded,
-.black.mrounded,
-.black.lrounded {
-  background-color: #333;
-}
-.green.srounded,
-.green.mrounded,
-.green.lrounded {
-  background-color: #3F8C2D;
-}
-.green.srounded:hover,
-.green.mrounded:hover,
-.green.lrounded:hover {
-  background-color: #41A22A;
-}
-.light.srounded,
-.light.mrounded,
-.light.lrounded {
-  background-color: #FEF5B7;
-  color: #B19242;
-  text-shadow: 0px 1px 1px rgba(255,255,255,1);
-  background-image: url(/images/vendor/buttons/bg-light.png);
-}
-.light.srounded:active,
-.light.mrounded:active,
-.light.lrounded:active {
-  text-shadow: 0px -1px 1px rgba(255,255,255,1);
-  background-image: url(/images/vendor/buttons/bg-light-rev.png);
-}
-.cancel.srounded,
-.cancel.mrounded,
-.cancel.lrounded {
-  background-color: #c0c0c0;
-  border: 1px solid rgba(0,0,0,.10);
-}
-
 form.stylish {
   select, input[type=text], input[type=password] {
     margin: 0;
@@ -110,6 +55,14 @@ form.stylish {
   div {
     margin-bottom: 5px;
   }
+}
+
+input[type=text], input[type=password], textarea, select {
+  border: 1px solid silver;
+  padding: 2px 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 /*==============================================================*/
@@ -123,6 +76,9 @@ table.stylish {
   }
   th, td {
     line-height: 23px;
+  }
+  td {
+    border-bottom: 1px solid silver;
   }
 }
 
@@ -170,6 +126,9 @@ header {
   border-bottom: 1px solid #C7AE46;
   text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
   
+  h1 a:hover {
+    text-decoration: none;
+  }
   h1, nav {
     line-height: 84px;
     margin-bottom: 21px;
@@ -273,11 +232,17 @@ header {
 /* Pagination */
 
 div.pagination {
+  margin: 1em 0;
   em {
     font-style: normal;
     background-color: black;
     background-image: none;
     cursor: default;
+  }
+  span.disabled {
+    background: transparent;
+    color: gray;
+    border-color: silver;
   }
 }
 

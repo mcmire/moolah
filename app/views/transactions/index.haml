@@ -7,7 +7,7 @@
   %p.bigger= page_entries_info(@transactions) + "."
   - form_tag url(:transactions, :dispatch, :account_id => params[:account_id]), :id => "form" do
     %p(style="margin-top: -5px; margin-bottom: 17px")
-      = button_submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :class => "mrounded light", :title => "Are you sure you want to delete these transactions?"
+      = button_submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :title => "Are you sure you want to delete these transactions?", :class => "light yellow medium"
     %table#transactions.stylish
       %tr
         %th.tcenter= check_box_tag "delete_all", :id => "delete_all"
@@ -28,16 +28,18 @@
           %td= transaction.check_number
           %td= transaction.description
           %td= transaction.amount_as_currency
-          %td= link_to "Edit", url(:transactions, :edit, :id => transaction.id, :account_id => transaction.account.webkey), :class => "srounded green"
-          %td= link_to "Delete", url(:transactions, :delete, :id => transaction.id, :account_id => transaction.account.webkey), :class => "delete srounded green", :title => "Are you sure you want to delete this transaction?"
+          %td= link_to "Edit", url(:transactions, :edit, :id => transaction.id, :account_id => transaction.account.webkey)
+          %td= link_to "Delete", url(:transactions, :delete, :id => transaction.id, :account_id => transaction.account.webkey), :class => "delete", :title => "Are you sure you want to delete this transaction?"
           
   = will_paginate @transactions
 - else
   %p No transactions.
 
 - if @account
-  %p= link_to "Import transactions into #{@account.name.downcase} account", url(:transactions, :import, :account_id => params[:account_id])
-  %p= link_to "Add a transaction", url(:transactions, :new, :account_id => params[:account_id])
+  %p
+    = link_to "Import transactions into #{@account.name.downcase} account", url(:transactions, :import, :account_id => params[:account_id])
+    %br
+    = link_to "Add a transaction", url(:transactions, :new, :account_id => params[:account_id])
 
 %hr
 

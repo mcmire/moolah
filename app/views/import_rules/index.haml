@@ -5,17 +5,17 @@
 
 - if @import_rules.any?
   - form_tag url(:import_rules, :dispatch), :id => "form" do
-    %p
-      = submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :class => "delete", :title => "Are you sure you want to delete these import rules?"
-    %table#import_rules
+    %p(style="margin-top: -5px; margin-bottom: 17px")
+      = button_submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :title => "Are you sure you want to delete these import rules?", :class => "light yellow medium"
+    %table#import_rules.stylish
       %tr
         %th= check_box_tag "delete_all", :id => "delete_all"
         %th Pattern
         %th Account
         %th Category
         %th Description
-        %td
-        %td
+        %th
+        %th
       - for import_rule in @import_rules
         %tr{:id => "import_rule_#{import_rule.id}"}
           %td= check_box_tag "to_delete[]", :value => import_rule.id, :id => "to_delete_#{import_rule.id}", :class => "delete_box"

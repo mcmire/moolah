@@ -1,0 +1,146 @@
+/*
+ * CSS3-only buttons, adapted from http://somadesign.ca/2010/realistic-looking-css3-buttons/.
+ *
+ * Inspired by:
+ * 	http://blog.anomalyinnovations.com/2010/03/creating-a-realistic-looking-button-with-css3/
+ * 	http://flyosity.com/tutorial/crafting-subtle-realistic-user-interfaces.php
+ *
+ */
+
+.button, button {
+  display: inline-block;
+  vertical-align: top;
+	color: #111;
+	font-family: inherit;
+	font-size: inherit;
+	font-weight: bold;
+	text-align: center;
+	padding: 0;
+	background-repeat: repeat-x;
+	-webkit-box-shadow: 0px 1px 0px rgba(255,255,255,.55) inset,
+	                    0px -1px 0px rgba(0,0,0,.15) inset;
+	cursor: pointer;
+	outline: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	line-height: normal;
+}
+a.button {
+  text-decoration: none;
+}
+a.button:active, button:active {
+  -webkit-box-shadow: 0px 1px 0px rgba(0,0,0,.15) inset,
+	                    0px -1px 0px rgba(255,255,255,.55) inset;
+}
+
+.button.small, button.small {
+  font-size: 11px;
+  padding: 1px 5px;
+  /*line-height: 17px;*/
+  -moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+  border-radius: 6px;
+  vertical-align: bottom;
+  /*border: 1px solid rgba(0,0,0,.4);*/
+}
+a.button.small {
+  position: relative;
+  top: 0px;
+}
+
+.button.medium, button.medium {
+  padding: 2px 9px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	vertical-align: bottom;
+}
+a.button.medium {
+  padding: 3px 9px;
+  position: relative;
+  top: -1px;
+}
+
+.button.dark, button.dark,
+.button.green, button.green {
+  background-image: -moz-linear-gradient(top, rgba(255,255,255,.23) 0%, transparent 50%, rgba(0,0,0,.23) 50%, transparent 100%);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, 
+		from(rgba(255,255,255,.23)),
+		color-stop(0.5, transparent),
+		color-stop(0.5, rgba(0,0,0,.23)),
+		to(transparent)
+	);
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  color: white;
+  text-shadow: 0px 1px 1px rgba(0,0,0,.45);
+}
+a.dark.button:hover, button.dark:hover,
+a.dark.button:focus, button.dark:focus {
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.33) 0%, rgba(255,255,255,.1) 50%, rgba(0,0,0,.13) 50%, rgba(255,255,255,.1) 100%);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, 
+		from(rgba(255,255,255,.33)),
+		color-stop(0.5, rgba(255,255,255,.1)),
+		color-stop(0.5, rgba(0,0,0,.13)),
+		to(rgba(255,255,255,.1))
+	);
+}
+a.dark.button:active, button.dark:active {
+	background-image: -moz-linear-gradient(top, rgba(0,0,0,.23), rgba(255,255,255,.23));
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,
+	  from(rgba(0,0,0,.23)),
+	  to(rgba(255,255,255,.23))
+	);
+	text-shadow: 0px -1px 1px rgba(0,0,0,.45);
+}
+
+.button.green, button.green {
+  /*background-color: #3F8C2D;*/
+  /*background-color: #4FA03F;*/
+  /*background-color: #6BAF5F;*/
+  background-color: #4EAB38;
+}
+
+.button.light, button.light {
+  background-image: -moz-linear-gradient(top, rgba(255,255,255,.25) 0%, transparent 50%, rgba(0,0,0,.15) 50%, transparent 100%);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, 
+		from(rgba(255,255,255,.25)),
+		color-stop(0.5, transparent),
+		color-stop(0.5, rgba(0,0,0,.15)),
+		to(transparent)
+	);
+  border: 1px solid rgba(0, 0, 0, 0.36);
+  text-shadow: 0px -1px 1px rgba(255,255,255,1);
+}
+a.light.button:hover, button.light:hover,
+a.light.button:focus, button.light:focus {
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.35) 0%, rgba(255,255,255,.1) 50%, rgba(0,0,0,.05) 50%, rgba(255,255,255,.1) 100%);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, 
+		from(rgba(255,255,255,.35)),
+		color-stop(0.5, rgba(255,255,255,.1)),
+		color-stop(0.5, rgba(0,0,0,.05)),
+		to(rgba(255,255,255,.1))
+	);
+}
+a.light.button:active, button.light:active {
+	background-image: -moz-linear-gradient(top, rgba(0,0,0,.1), rgba(255,255,255,.1));
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,
+	  from(rgba(0,0,0,.1)),
+	  to(rgba(255,255,255,.1))
+	);
+	text-shadow: 0px 1px 1px rgba(255,255,255,1);
+}
+
+.button.blue, button.blue {
+  color: #17366F;
+  background-color: #DFF5FB;
+}
+
+.button.yellow, button.yellow {
+  color: #423933;
+  background-color: #FFF3AD
+}
+
+.button.white, button.white {
+  color: #222;
+  background-color: white;
+}

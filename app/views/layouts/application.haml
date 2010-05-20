@@ -6,7 +6,9 @@
     /= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"
     = javascript_include_tag "vendor/jquery.min.js"
     = javascript_include_tag "vendor/jquery.form.js"
-    = stylesheet_link_tag "lib/html5", "app/application"
+    = stylesheet_link_tag "vendor/html5"
+    /, "vendor/css3-only-buttons"
+    = stylesheet_link_tag "app/application", "app/stylish-forms", "app/css3-only-buttons"
     = yield_content :head
     %style(type="text/css")
       = yield_content :head_styles
@@ -14,7 +16,7 @@
       = yield_content :head_scripts
   %body(id="#{body_id}" class="#{body_class}")
     %header
-      %h1= Moolah[:site_title]
+      %h1= link_to Moolah[:site_title], "/"
       %nav
         %ul
           %li

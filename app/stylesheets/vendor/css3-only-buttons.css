@@ -1,0 +1,197 @@
+/*
+ * CSS3-only buttons, taken from http://somadesign.ca/2010/realistic-looking-css3-buttons/.
+ *
+ * Inspired by:
+ * 	http://blog.anomalyinnovations.com/2010/03/creating-a-realistic-looking-button-with-css3/
+ * 	http://flyosity.com/tutorial/crafting-subtle-realistic-user-interfaces.php
+ *
+ */
+
+a.button, input[type=submit], button {
+	text-decoration: none;
+	border-color:rgba(0, 0, 0, 0.56);
+	cursor: pointer;
+	outline: none;
+	color:#111;
+	font-family:"Lucida Grande","Lucida Sans","Lucida Sans Unicode","Segoe UI",Verdana,sans-serif;
+	display:inline-block;
+	vertical-align:top;
+	position:relative;
+	font-size:12px;
+	font-weight:bold;
+	text-align:center;
+	background-color:#aaa;
+	background: #aaa -moz-linear-gradient(top, rgba(255,255,255,.75), rgba(255,255,255,0));
+	background: #aaa -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,.75)), to(rgba(255,255,255,0)));
+	text-shadow:1px 1px 0 rgba(255,255,255,.67);
+	line-height:24px;
+	height:24px;
+	margin:0 0 24px 12px;
+	width:75px;
+	padding:0;
+	/** Make the text unselectable **/
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+input[type=submit], input[type=submit]:active {
+	line-height:1 !important;
+	width:auto;
+	padding:0 9px 1px;
+}
+a.button, a.button:after, a.button:before, button, button:after, button:before, input[type=submit] {
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	border-radius:4px;
+	border-width:1px;
+	border-style:solid;
+}
+a.button:after, a.button:before, button:after, button:before {
+	display:block;
+	position:absolute;
+	content:' ';
+}
+a.button:before, button:before {
+	border-color: #FFF rgba(255,255,255,.25) rgba(255,255,255,.25);
+	left:0;
+	top:0;
+	width:73px;
+	height:22px;
+}
+a.button:after, button:after {
+	border-color: transparent transparent rgba(255, 255, 255, 0.63);
+	left:-1px;
+	bottom:-2px;
+	height:100%;
+	width:100%;
+}
+a.button:hover, a.button:focus, button:hover, button:focus, input[type=submit]:hover, input[type=submit]:focus {
+	background-image:-moz-linear-gradient(top, rgba(255,255,255,.9), rgba(255,255,255,0.2));
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,.9)), to(rgba(255,255,255,0.2)));
+}
+a.button:active, button:active, input[type=submit]:active {
+	background-image:-moz-linear-gradient(top, rgba(75,75,75,.4), rgba(255,255,255,.4));
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(75,75,75,.4)), to(rgba(255,255,255,.4)));
+	line-height:26px;
+}
+a.button:active:before, button:active:before {
+	border-color: rgba(255, 255, 255, 0.11) rgba(255, 255, 255, 0.23) rgba(255, 255, 255, 0.27);
+}
+ 
+a.button.bg {
+	-webkit-transition: all .185s linear;
+	-moz-transition: all .185s linear;
+}
+a.button.bg, a.button.bg:hover, a.button.bg:focus {
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.75), rgba(255,255,255,0));
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,.75)), to(rgba(255,255,255,0)));
+}
+a.button.bg:hover, a.button.bg:focus {
+	background-color:#a8c0cb;
+}
+a.button.bg:active {
+	background-image:-moz-linear-gradient(top, rgba(75,75,75,.4), rgba(255,255,255,.4));
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(75,75,75,.4)), to(rgba(255,255,255,.4)));
+}
+ 
+/* Lengths */
+a.button.short {
+	width:50px;
+}
+a.button.short:before {
+	width:48px;
+}
+a.button.long {
+	width:125px;
+}
+a.button.long:before {
+	width:123px;
+}
+a.button.super, button.super {
+	width:200px;
+}
+a.button.super:before, button.super:before {
+	width:198px;
+}
+a.button.crazy {
+	width:250px;
+}
+a.button.crazy:before {
+	width:248px;
+}
+ 
+/* Colors/Styles */
+a.button.blue {
+	background-color:#9eb4bf;
+}
+a.button.darkblue {
+	background-color:#046;
+	color:#fff;
+	text-shadow:-1px -1px 0 rgba(0,0,0,.3);
+}
+a.button.red {
+	background-color:#900;
+	color:#fff;
+	text-shadow:-1px -1px 0 rgba(0,0,0,.3);
+}
+a.button.red:before {
+	border-top-color:rgba(255,255,255,.5);
+}
+a.button.green {
+	background-color:#86bf7c;
+}
+a.button.pill, a.button.pill:before, a.button.pill:after {
+	-moz-border-radius:12px;
+	-webkit-border-radius:12px;
+	border-radius:12px;
+}
+a.button.black {
+	background-color:#000;
+	color:#fff;
+	text-shadow:-1px -1px 0 rgba(0,0,0,.3);
+}
+a.button.black:before {
+	border-top-color:rgba(255,255,255,.67);
+}
+a.button.sharp {
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.75), rgba(255,255,255,.33) 50%, transparent 50%, transparent 100%);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, 
+		from(rgba(255,255,255,.75)),
+		color-stop(0.5, rgba(255,255,255,.33) ),
+		color-stop(0.5, transparent ),
+		to(transparent)
+	);
+	background-repeat:repeat-x;
+}
+a.button.sharp:hover, a.button.sharp:focus {
+	background-image:-moz-linear-gradient(top, rgba(255,255,255,.75), rgba(255,255,255,.4) 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,0) 100%);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, 
+		from(rgba(255,255,255,.75)),
+		color-stop(0.5, rgba(255,255,255,.67) ),
+		color-stop(0.5, rgba(255,255,255,.33) ),
+		to( rgba(255,255,255,.15) )
+	);
+}
+a.button.sharp:active {
+	background-image:-moz-linear-gradient(top, rgba(75,75,75,.4), rgba(255,255,255,.4));
+	background-image:-moz-linear-gradient(top, rgba(0,0,0,.1), rgba(0,0,0,0) 50%, rgba(255,255,255,.25) 50%, rgba(255,255,255,.33) 100%);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, 
+		from(rgba(255,255,255,.75)),
+		color-stop(0.5, rgba(255,255,255,.67) ),
+		color-stop(0.5, rgba(255,255,255,.33) ),
+		to( rgba(255,255,255,.15) )
+	);
+}
+.credit {
+	padding:60px 0 0;
+	line-height:26px;
+}
+ 
+button.inset {
+	width:auto;
+	padding:0 9px;
+	-moz-box-shadow:1px 1px 0 rgba(255,255,255,.5) inset;
+	-webkit-box-shadow:1px 1px 1px pink inset;
+}
+button.inset:before, button.inset:after {
+	display:none;
+}

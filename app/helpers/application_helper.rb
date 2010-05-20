@@ -1,7 +1,7 @@
 Moolah.helpers do
   def nav_link_to(text, url, options={})
     options.reverse_merge!(:class => "")
-    re = Regexp.new('^'+Regexp.escape(url))
+    re = Regexp.new(Regexp.escape(url)+'$')
     options[:class] += " active" if request.path =~ re
     link_to(text, url, options)
   end
