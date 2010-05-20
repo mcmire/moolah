@@ -18,14 +18,22 @@ TODO
  ✔ Flesh out the integration specs
  ✔ Switch to Mongoid
  ✘ Switch to Ruby 1.9 (enforce too?)
- 
  ✔ Paginate the transaction list
  ✔ Fix currently disabled javascript delete multiple actions
+ ✔ CSSify this biatch (reset stylesheet, vertical rhythm, etc.)
+ 
  * Get graphs working again (and write some tests)
- * CSSify this biatch (reset stylesheet, vertical rhythm, etc.)
- * Javascript add/edit (click on a line to edit, click out to cancel)
+ * Add a bit of JS to the transaction list
+   * Click on a transaction row to select it (check box, highlight row), click again to de-select
+   * Double-click a row to edit it (popdown div)
+     * Maybe edit-in-place fields?
+   * Move delete link to popdown div
+ * Adding a new resource should happen in a facybox or something
  * Upon import, show a line in between current import and existing data (so we know what we've imported)
  
+ * Figure out a way to screenscrape Regions' interface to automatically download CSVs
+ 
+ * Can we style select boxes or file inputs?
  * Make integration stuff into a gem and require that instead (and convert over to spec/integration)
  * Add account management
  * Sort by column in transactions list
