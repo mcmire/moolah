@@ -7,7 +7,7 @@
   %p.bigger= page_entries_info(@transactions) + "."
   - form_tag url(:transactions, :dispatch, :account_id => params[:account_id]), :id => "form" do
     %p(style="margin-top: -5px; margin-bottom: 17px")
-      = button_submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :title => "Are you sure you want to delete these transactions?", :class => "light yellow medium"
+      = button_submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :title => "Are you sure you want to delete these transactions?", :class => "light white medium"
     %table#transactions.stylish
       %tr
         %th.tcenter= check_box_tag "delete_all", :id => "delete_all"
@@ -37,8 +37,10 @@
 
 - if @account
   %p
+    = link_to image_tag("vendor/silk/table_row_insert.png"), url(:transactions, :import, :account_id => params[:account_id]), :class => "icon"
     = link_to "Import transactions into #{@account.name.downcase} account", url(:transactions, :import, :account_id => params[:account_id])
     %br
+    = link_to image_tag("vendor/silk/add.png"), url(:import_rules, :new), :class => "icon"
     = link_to "Add a transaction", url(:transactions, :new, :account_id => params[:account_id])
 
 %hr

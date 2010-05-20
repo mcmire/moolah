@@ -5,7 +5,5 @@
     %label(for="file") File
     %input(type="file" id="file" name="file")
   %p
-    %button(type="submit") Import
-
-%p
-  = link_to "Return to list", url(:transactions, :index, :account_id => params[:account_id])
+    = button_submit_tag "Import", :class => "dark green medium"
+    = link_to "Cancel", url(:transactions, :index, :account_id => params[:account_id]), :class => "button light white medium"

@@ -6,7 +6,7 @@
 - if @import_rules.any?
   - form_tag url(:import_rules, :dispatch), :id => "form" do
     %p(style="margin-top: -5px; margin-bottom: 17px")
-      = button_submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :title => "Are you sure you want to delete these import rules?", :class => "light yellow medium"
+      = button_submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :title => "Are you sure you want to delete these import rules?", :class => "light white medium"
     %table#import_rules.stylish
       %tr
         %th= check_box_tag "delete_all", :id => "delete_all"
@@ -28,4 +28,6 @@
 - else
   %p No import rules.
 
-%p= link_to "Add an import rule", url(:import_rules, :new)
+%p
+  = link_to image_tag("vendor/silk/add.png"), url(:import_rules, :new), :class => "icon"
+  = link_to "Add an import rule", url(:import_rules, :new)

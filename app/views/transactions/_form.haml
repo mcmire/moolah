@@ -33,5 +33,5 @@
         - caption = "Apply these settings to past and future #{transaction.original_description ? "<b>#{transaction.original_description}</b> transactions" : "transactions like these"}"
         = f.label :creating_import_rule, :caption => caption
   %p.buttons
-    %button.medium.dark.green(type="submit")= button_text
+    = button_submit_tag button_text, :class => "medium dark green"
     = link_to "Cancel", url(:transactions, :index, :account_id => params[:account_id]), :class => "button medium light white"

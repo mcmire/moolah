@@ -5,5 +5,5 @@
       = f.label :name
       = f.text_field :name, :size => 50
   %p.buttons
-    %button.rounded(type="submit")= button_text
-    = link_to "Cancel", url(:categories, :index), :class => "rounded cancel"
+    = button_submit_tag button_text, :class => "medium dark green"
+    = link_to "Cancel", url(:categories, :index), :class => "button medium light white"

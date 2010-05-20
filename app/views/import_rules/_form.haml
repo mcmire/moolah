@@ -14,5 +14,5 @@
       = f.label :description
       = f.text_field :description, :size => 50
   %p.buttons
-    %button.rounded(type="submit")= button_text
-    = link_to "Cancel", url(:import_rules, :index, :account_id => params[:account_id]), :class => "rounded cancel"
+    = button_submit_tag button_text, :class => "medium dark green"
+    = link_to "Cancel", url(:import_rules, :index, :account_id => params[:account_id]), :class => "button medium light white"

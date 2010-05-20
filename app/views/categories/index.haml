@@ -6,7 +6,7 @@
 - if @categories.any?
   - form_tag url(:categories, :dispatch), :id => "form" do
     %p(style="margin-top: -5px; margin-bottom: 17px")
-      = button_submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :title => "Are you sure you want to delete these categories?", :class => "light yellow medium"
+      = button_submit_tag "Delete checked", :name => "delete_checked", :id => "delete_checked", :title => "Are you sure you want to delete these categories?", :class => "light white medium"
     %table#categories.stylish
       %tr
         %th= check_box_tag "delete_all", :id => "delete_all"
@@ -22,4 +22,6 @@
 - else
   %p No categories.
 
-%p= link_to "Add a category", url(:categories, :new)
+%p
+  = link_to image_tag("vendor/silk/add.png"), url(:import_rules, :new), :class => "icon"
+  = link_to "Add a category", url(:categories, :new)
