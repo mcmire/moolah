@@ -1,6 +1,6 @@
 # moolah
 
-## UPDATE
+## UPDATE (12/8/2011)
 
 I've stopped working on this project for now, mainly because I realized that having to go to my bank's website, download a CSV, and import it into Moolah every dang month was a pain. What I wanted was to be able to tell Moolah to connect to my bank automatically, but ideally you want to make this possible for multiple banks. Unfortunately in my brief research into this I realized that fetching data from banks is a nightmare -- they just don't make it easy to do this (either because of security reasons or because their software is running on 100 year old computers) and what you end up having to do is write a screenscraper to just pretend to be a user and log in through the web interface. This, incidentally, is exactly what Mint (and before that, Wesabe) does, so it was a lot easier just to switch to that.
 
