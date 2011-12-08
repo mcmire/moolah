@@ -1,5 +1,15 @@
 # moolah
 
+## UPDATE
+
+I've stopped working on this project for now, mainly because I realized that having to go to my bank's website, download a CSV, and import it into Moolah every dang month was a pain. What I wanted was to be able to tell Moolah to connect to my bank automatically, but ideally you want to make this possible for multiple banks. Unfortunately in my brief research into this I realized that fetching data from banks is a nightmare -- they just don't make it easy to do this (either because of security reasons or because their software is running on 100 year old computers) and what you end up having to do is write a screenscraper to just pretend to be a user and log in through the web interface. This, incidentally, is exactly what Mint (and before that, Wesabe) does, so it was a lot easier just to switch to that.
+
+With that said, I don't really use Mint anymore because it only does half of what I want. It's nice that it automates a lot of stuff but I'm kind of lazy with it now -- I might check it once a month just to make sure everything's okay. So perhaps the automation isn't a good idea, I don't know. There are also some goals I had with Moolah that Mint doesn't do -- most of them have to do with number crunching to analyze your spending/savings in various ways and give you all sorts of statistics or even a projection of how much you'll have in so many years, or how much you'd have at a certain point in time if you cut your budget in this way. Plus I think Mint still doesn't support custom transactions or splitting transactions in two (although I could be wrong). And the budget feature is kind of annoying, because the way I spend money, I find it to be too inflexible -- how much I spend per month changes depending on what I choose to spend that month and I've come to just ignore the over-budget notifications I get. It's almost like it should allow a range of values for each category in your budget, or auto-flex or something.
+
+So anyway, I have other side projects I am occupied with at the moment, but if you are interested in Moolah or you even have some ideas of your own and you would like to work on it, I would love to make time to work with you on it.
+
+And now on with the README...
+
 ## what is it?
 
 Moolah is a very, very simple app I'm building to help me manage my money.
